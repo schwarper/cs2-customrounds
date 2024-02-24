@@ -8,6 +8,12 @@ A custom round plugin
 # css_{ShortCut} - Start custom round like "css_dr". You can set it in config.
 ```
 
+## Images
+
+![cs2-customrounds](https://media.discordapp.net/attachments/1210765210982424596/1210765211607502939/Adsz.png?ex=65ebbff9&is=65d94af9&hm=9dbdbec651caf4b1fa0db601c81affd4c273b2c96623ce953ab5469dae4c9e04&=&format=webp&quality=lossless&width=994&height=559)
+
+![cs2-customrounds](https://media.discordapp.net/attachments/1210765210982424596/1210765212324724816/Adsz2.png?ex=65ebbff9&is=65d94af9&hm=a97555e6a134a7767259c1a9ac5b1abfb95bfebabac2efc76804fc83291e0abf&=&format=webp&quality=lossless&width=994&height=559)
+
 ## Setting rounds
 You can set special rounds in the config file. You can get help from the config sample file I have given below.
 CenterMsg text must be integrated into the lang file for example "lang_specialround"
