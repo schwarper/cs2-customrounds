@@ -18,6 +18,21 @@ A custom round plugin
 You can set special rounds in the config file. You can get help from the config sample file I have given below.
 CenterMsg text must be integrated into the lang file for example "lang_specialround"
 
+### Adjustable features
+```
+Name
+Weapons
+Shortcut
+OnlyHeadshot
+KnifeDamage
+NoScope
+Health
+Speed
+Cmd
+CenterMsg
+```
+
+### Json
 ```json
 {
     "default_ct_weapons": [ "knife", "deagle", "awp" ],
