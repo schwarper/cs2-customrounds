@@ -3,8 +3,9 @@
 
     "No access": "{white}Tev nav pieejas izmantot šo komandu.",
 
-    "Admin set round": "{blue}{0}{white} has set the next round to {green}{1}{white}",
-    "Next round is": "{white}Next round is {green}{1}{white}.",
+    "Admin set round": "{blue}{0}{white} ir iestatījis nākamo raundu uz {green}{1}{white}",
+    "Next round is": "{white}Nākošais raunds būs: {green}{1}{white}.",
 
-    "lang_specialround": "<font color=red>Custom Round</font><br> <font color=blue>{0}</font>"
+    "lang_specialround": "<font color=red>Custom Raunds</font><br> <font color=blue>{0}</font>"
+
 }
