@@ -1,0 +1,8 @@
+{
+	"Prefix": "{red}[CSS] ",
+
+	"Admin set round": "{blue}{0}{white}, sonraki turu {green}{1} {white}olarak ayarladı.",
+	"Next round is": "{white}Sonraki tur {green}{1} {white}olarak ayarlandı.",
+
+	"lang_specialround": "<font color=red>Özel Tur</font><br> <font color=blue>{0}</font>"
+}
