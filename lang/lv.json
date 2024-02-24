@@ -1,0 +1,8 @@
+{
+    "Prefix": "{red}[CSS] ",
+
+    "Admin set round": "{blue}{0}{white} John ir iestatījis nākamo raundu uz {green}{1}{white}",
+    "Next round is": "{white}Nākošais raunds būs: {green}{1}{white}.",
+
+    "lang_specialround": "<font color=red>Custom Raunds</font><br> <font color=blue>{0}</font>"
+}
