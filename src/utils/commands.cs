@@ -20,6 +20,12 @@ public partial class CustomRounds
                         return;
                     }
 
+                    if (!AdminManager.PlayerHasPermissions(player, Config.AdminFlag))
+                    {
+                        PrintToChat(player, "No access");
+                        return;
+                    }
+
                     GlobalNextRound = round;
 
                     PrintToChatAll("Admin set round", player.PlayerName, round.Name);
@@ -29,12 +35,17 @@ public partial class CustomRounds
     }
 
     [ConsoleCommand("css_voteround")]
-    [RequiresPermissions("@css/generic")]
     [CommandHelper(minArgs: 0, "Start voting for the next custom round", whoCanExecute: CommandUsage.CLIENT_ONLY)]
     public void Command_VoteRound(CCSPlayerController? player, CommandInfo command)
     {
         if (player == null)
         {
+            return;
+        }
+
+        if (!AdminManager.PlayerHasPermissions(player, Config.AdminFlag))
+        {
+            PrintToChat(player, "No access");
             return;
         }
 

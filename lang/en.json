@@ -1,6 +1,8 @@
 {
     "Prefix": "{red}[CSS] ",
 
+    "No access": "{white}You are not authorized to use this command.",
+
     "Admin set round": "{blue}{0}{white} has set the next round to {green}{1}{white}",
     "Next round is": "{white}Next round is {green}{1}{white}.",
 

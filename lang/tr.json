@@ -1,6 +1,8 @@
 {
 	"Prefix": "{red}[CSS] ",
 
+	"No access": "{white}Bu komutu kullanmaya yetkiniz yok.",
+
 	"Admin set round": "{blue}{0}{white}, sonraki turu {green}{1} {white}olarak ayarladı.",
 	"Next round is": "{white}Sonraki tur {green}{1} {white}olarak ayarlandı.",
 
