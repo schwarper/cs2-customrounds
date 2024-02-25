@@ -32,33 +32,36 @@ public partial class CustomRounds
                 return HookResult.Continue;
             }
 
-            player.RemoveWeapons();
-
-            if (GlobalCurrentRound == null)
+            AddTimer(0.1f, () =>
             {
-                if (player.Team == CsTeam.CounterTerrorist)
+                player.RemoveWeapons();
+
+                if (GlobalCurrentRound == null)
                 {
-                    player.GiveWeapon(Config.DefaultCTWeapons);
+                    if (player.Team == CsTeam.CounterTerrorist)
+                    {
+                        player.GiveWeapon(Config.DefaultCTWeapons);
+                    }
+                    else
+                    {
+                        player.GiveWeapon(Config.DefaultTWeapons);
+                    }
+
+                    return;
                 }
-                else
+
+                player.GiveWeapon(GlobalCurrentRound.Weapons);
+
+                if (GlobalCurrentRound.Health > 0)
                 {
-                    player.GiveWeapon(Config.DefaultTWeapons);
+                    player.Health(GlobalCurrentRound.Health);
                 }
 
-                return HookResult.Continue;
-            }
-
-            player.GiveWeapon(GlobalCurrentRound.Weapons);
-
-            if (GlobalCurrentRound.Health > 0)
-            {
-                player.Health(GlobalCurrentRound.Health);
-            }
-
-            if (GlobalCurrentRound.Speed > 0)
-            {
-                player.PlayerPawn?.Value?.Speed(GlobalCurrentRound.Speed);
-            }
+                if (GlobalCurrentRound.Speed > 0)
+                {
+                    player.PlayerPawn?.Value?.Speed(GlobalCurrentRound.Speed);
+                }
+            });
 
             return HookResult.Continue;
         });
@@ -97,11 +100,28 @@ public partial class CustomRounds
                 GlobalCurrentRound = GlobalNextRound;
                 GlobalNextRound = null;
 
+                if (GlobalCurrentRound.NoBuy)
+                {
+                    IEnumerable<CBaseEntity> Sites = Utilities.FindAllEntitiesByDesignerName<CBaseEntity>("func_bomb_target");
+
+                    foreach (CBaseEntity entity in Sites)
+                    {
+                        entity.AcceptInput("Disable");
+                    }
+                }
+
                 Server.ExecuteCommand(GlobalCurrentRound.Cmd);
             }
             else
             {
                 GlobalCurrentRound = null;
+
+                IEnumerable<CBaseEntity> Sites = Utilities.FindAllEntitiesByDesignerName<CBaseEntity>("func_bomb_target");
+
+                foreach (CBaseEntity entity in Sites)
+                {
+                    entity.AcceptInput("Enable");
+                }
 
                 Server.ExecuteCommand(Config.RoundEndCmd);
             }
@@ -139,6 +159,6 @@ public partial class CustomRounds
             return;
         }
 
-        PrintToCenterHtml(player, GlobalCurrentRound.CenterMsg, GlobalCurrentRound.Name);
+        PrintToCenterHtml(player);
     }
 }

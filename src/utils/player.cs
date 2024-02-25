@@ -10,12 +10,6 @@ public static class PlayerUtils
     {
         { "zeus", CsItem.Taser },
         { "taser", CsItem.Taser },
-        { "snowball", CsItem.Snowball },
-        { "shield", CsItem.Shield },
-        { "c4", CsItem.C4 },
-        { "healthshot", CsItem.Healthshot },
-        { "breachcharge", CsItem.BreachCharge },
-        { "tablet", CsItem.Tablet },
         { "bumpmine", CsItem.Bumpmine },
         { "smoke", CsItem.SmokeGrenade },
         { "smokegrenade", CsItem.SmokeGrenade },
@@ -30,10 +24,8 @@ public static class PlayerUtils
         { "decoy", CsItem.Decoy },
         { "ta", CsItem.TAGrenade },
         { "tagrenade", CsItem.TAGrenade },
-        { "frag", CsItem.Frag },
         { "firebomb", CsItem.Firebomb },
         { "diversion", CsItem.Diversion },
-        { "knife_t", CsItem.KnifeT },
         { "knife", CsItem.Knife },
         { "deagle", CsItem.Deagle },
         { "glock", CsItem.Glock },
@@ -75,9 +67,7 @@ public static class PlayerUtils
         { "aug", CsItem.AUG },
         { "ssg08", CsItem.SSG08 },
         { "scar20", CsItem.SCAR20 },
-        { "g3sg1", CsItem.G3SG1 },
-        { "kevlar", CsItem.Kevlar },
-        { "assaultsuit", CsItem.AssaultSuit }
+        { "g3sg1", CsItem.G3SG1 }
     };
 
     static public bool Valid(this CCSPlayerController player)

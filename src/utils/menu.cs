@@ -15,7 +15,7 @@ public partial class CustomRounds
 
         CenterHtmlMenu menu = new("Custom Rounds")
         {
-            PostSelectAction = PostSelectAction.Close
+            PostSelectAction = PostSelectAction.Nothing
         };
 
         Dictionary<Round, int> GetRandomRounds()
@@ -46,12 +46,14 @@ public partial class CustomRounds
             Round round = wk.Key;
             int vote = wk.Value;
 
-            menu.AddMenuOption(round.Name, (player, option) =>
+            menu.AddMenuOption($"{round.Name} [{rounds[round]}]", (player, option) =>
             {
                 if (!players.Contains(player))
                 {
                     rounds[round]++;
                     players.Add(player);
+
+                    option.Text = $"{round.Name} [{rounds[round]}]";
                 }
             });
         }

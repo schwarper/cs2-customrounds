@@ -4,8 +4,8 @@
     "No access": "{white}Tev nav pieejas izmantot šo komandu.",
 
     "Admin set round": "{blue}{0}{white} ir iestatījis nākamo raundu uz {green}{1}{white}",
-    "Next round is": "{white}Nākošais raunds būs: {green}{1}{white}.",
+    "Next round is": "{white}Nākošais raunds būs: {green}{0}{white}.",
 
-    "lang_specialround": "<font color=red>Custom Raunds</font><br> <font color=blue>{0}</font>"
-
+    "html_png": "<img src='https://csgo.leadertr.com/images/customrounds/{0}.png' width='1' height='1'></img>",
+    "html_customround": "<center><font color='red'>{0}<br><b color='white'>━━━━━━━━━━━━━━━━━━━━━━━━<</b></center><br>"
 }

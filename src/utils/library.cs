@@ -30,12 +30,32 @@ public partial class CustomRounds : BasePlugin
         }
     }
 
-    private void PrintToCenterHtml(CCSPlayerController player, string message, params object[] args)
+    private void PrintToCenterHtml(CCSPlayerController player)
     {
         using (new WithTemporaryCulture(player.GetLanguage()))
         {
-            StringBuilder builder = new();
-            builder.AppendFormat(Localizer[message], args);
+            StringBuilder builder = new(Localizer[GlobalCurrentRound!.CenterMsg, GlobalCurrentRound.Name]);
+
+            foreach (string weapon in GlobalCurrentRound.Weapons)
+            {
+                if (weapon.Equals("knife") && !GlobalCurrentRound.KnifeDamage)
+                {
+                    continue;
+                }
+
+                builder.Append(Localizer["html_png", weapon]);
+            }
+
+            if (GlobalCurrentRound.NoScope)
+            {
+                builder.Append(Localizer["html_png", "noscope"]);
+            }
+
+            if (GlobalCurrentRound.OnlyHeadshot)
+            {
+                builder.Append(Localizer["html_png", "headshot"]);
+            }
+
             player.PrintToCenterHtml(builder.ToString());
         }
     }
