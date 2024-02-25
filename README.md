@@ -32,6 +32,7 @@ Health
 Speed
 Cmd
 CenterMsg
+NoBuy
 ```
 
 ### Json
@@ -126,7 +127,7 @@ CenterMsg
       "NoBuy": true,
       "Health": 100,
       "Speed": 2,
-      "Cmd": "",
+      "Cmd": "mp_taser_recharge_time 0.1",
       "CenterMsg": "html_customround"
     },
     "6": {
