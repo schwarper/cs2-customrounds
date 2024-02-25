@@ -10,9 +10,11 @@ A custom round plugin
 
 ## Images
 
-![cs2-customrounds](https://media.discordapp.net/attachments/1210765210982424596/1210765211607502939/Adsz.png?ex=65ebbff9&is=65d94af9&hm=9dbdbec651caf4b1fa0db601c81affd4c273b2c96623ce953ab5469dae4c9e04&=&format=webp&quality=lossless&width=994&height=559)
+![cs2-customrounds](https://media.discordapp.net/attachments/1210765210982424596/1211110019907584020/Adsz.png?ex=65ed011a&is=65da8c1a&hm=1e5e04741aa94a1e4d70bf9a628e7f1fc3ea23e440db629307dcfa3a974070da&=&format=webp&quality=lossless))
 
-![cs2-customrounds](https://media.discordapp.net/attachments/1210765210982424596/1210765212324724816/Adsz2.png?ex=65ebbff9&is=65d94af9&hm=a97555e6a134a7767259c1a9ac5b1abfb95bfebabac2efc76804fc83291e0abf&=&format=webp&quality=lossless&width=994&height=559)
+![cs2-customrounds](https://media.discordapp.net/attachments/1210765210982424596/1211110020427817030/awp.png?ex=65ed011a&is=65da8c1a&hm=22cf44d3ec7d46d164d80bc8c8913ae8a8b991508721b23910b549e2164fcf33&=&format=webp&quality=lossless)
+
+![cs2-customrounds](https://media.discordapp.net/attachments/1210765210982424596/1211110020914090024/deagle.png?ex=65ed011a&is=65da8c1a&hm=a9de07321bd3e9143978cc85c48f103adff8568821f9b9d3920666fd4eaecfcb&=&format=webp&quality=lossless)
 
 ## Setting rounds
 You can set special rounds in the config file. You can get help from the config sample file I have given below.
