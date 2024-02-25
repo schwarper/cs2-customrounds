@@ -6,6 +6,6 @@
 	"Admin set round": "{blue}{0}{white}, sonraki turu {green}{1} {white}olarak ayarladı.",
 	"Next round is": "{white}Sonraki tur {green}{0} {white}olarak ayarlandı.",
 
-	"html_png": "<img src='https://csgo.leadertr.com/images/customrounds/{0}.png' width='1' height='1'></img>",
+	"html_png": "<img src='https://csgo.leadertr.com/images/customrounds/{0}.png'></img>",
 	"html_customround": "<center><font color='red'>{0}<br><b color='white'>━━━━━━━━━━━━━━━━━━━━━━━━<</b></center><br>"
 }
