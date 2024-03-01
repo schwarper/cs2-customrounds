@@ -6,9 +6,14 @@ namespace CustomRounds;
 
 public partial class CustomRounds
 {
-    private void StartRoundVote(CCSPlayerController player)
+    private void StartRoundVote()
     {
         if (Config.Rounds == null)
+        {
+            return;
+        }
+
+        if (GlobalIsVoteInProgress)
         {
             return;
         }
@@ -63,6 +68,8 @@ public partial class CustomRounds
             MenuManager.OpenCenterHtmlMenu(this, target, menu);
         }
 
+        GlobalIsVoteInProgress = true;
+
         AddTimer(15.0f, () =>
         {
             Round round = rounds.OrderByDescending(kv => kv.Value).FirstOrDefault().Key;
@@ -75,6 +82,8 @@ public partial class CustomRounds
             {
                 MenuManager.CloseActiveMenu(player);
             }
+
+            GlobalIsVoteInProgress = false;
         });
     }
 }

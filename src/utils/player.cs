@@ -59,6 +59,7 @@ public static class PlayerUtils
         { "m4a1_silencer", CsItem.M4A1S },
         { "m4", CsItem.M4A1 },
         { "m4a1", CsItem.M4A1 },
+        { "m4a4", CsItem.M4A1 },
         { "galil", CsItem.Galil },
         { "galilar", CsItem.Galil },
         { "famas", CsItem.Famas },

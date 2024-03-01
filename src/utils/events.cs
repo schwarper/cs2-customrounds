@@ -34,21 +34,23 @@ public partial class CustomRounds
 
             AddTimer(0.1f, () =>
             {
-                player.RemoveWeapons();
-
                 if (GlobalCurrentRound == null)
                 {
-                    if (player.Team == CsTeam.CounterTerrorist)
+                    if (player.Team == CsTeam.CounterTerrorist && Config.DefaultCTWeapons.Length > 0)
                     {
+                        player.RemoveWeapons();
                         player.GiveWeapon(Config.DefaultCTWeapons);
                     }
-                    else
+                    else if (Config.DefaultTWeapons.Length > 0)
                     {
+                        player.RemoveWeapons();
                         player.GiveWeapon(Config.DefaultTWeapons);
                     }
 
                     return;
                 }
+
+                player.RemoveWeapons();
 
                 player.GiveWeapon(GlobalCurrentRound.Weapons);
 
@@ -95,6 +97,14 @@ public partial class CustomRounds
 
         RegisterEventHandler<EventRoundEnd>((@event, info) =>
         {
+            if (Config.VoteRoundCount > 0)
+            {
+                if ((GetTeamScore(3) + GetTeamScore(2)) % Config.VoteRoundCount == 0)
+                {
+                    StartRoundVote();
+                }
+            }
+
             if (GlobalNextRound != null)
             {
                 GlobalCurrentRound = GlobalNextRound;

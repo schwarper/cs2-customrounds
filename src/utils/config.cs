@@ -10,6 +10,7 @@ public class CustomRoundsConfig : BasePluginConfig
     [JsonPropertyName("default_t_weapons")] public string[] DefaultTWeapons { get; set; } = new string[] { "knife", "deagle", "awp" };
     [JsonPropertyName("round_end_cmd")] public string RoundEndCmd { get; set; } = "sv_gravity 800";
     [JsonPropertyName("admin_flag")] public string AdminFlag { get; set; } = "@css/generic";
+    [JsonPropertyName("vote_round_count")] public int VoteRoundCount { get; set; } = 5;
     [JsonPropertyName("rounds")]
     public Dictionary<string, Round> Rounds { get; set; } = new Dictionary<string, Round>()
     {

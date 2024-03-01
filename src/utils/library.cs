@@ -59,4 +59,17 @@ public partial class CustomRounds : BasePlugin
             player.PrintToCenterHtml(builder.ToString());
         }
     }
+
+    private static int GetTeamScore(int teamNum)
+    {
+        foreach (CCSTeam team in Utilities.FindAllEntitiesByDesignerName<CCSTeam>("cs_team_manager"))
+        {
+            if (team.TeamNum == teamNum)
+            {
+                return team.Score;
+            }
+        }
+
+        return 0;
+    }
 }

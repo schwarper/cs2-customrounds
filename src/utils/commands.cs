@@ -49,6 +49,6 @@ public partial class CustomRounds
             return;
         }
 
-        StartRoundVote(player);
+        StartRoundVote();
     }
 }

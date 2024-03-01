@@ -16,5 +16,6 @@ public partial class CustomRounds
 
     private Round? GlobalCurrentRound = null;
     private Round? GlobalNextRound = null;
+    private bool GlobalIsVoteInProgress = false;
     private static readonly Random random = new();
 }
