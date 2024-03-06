@@ -76,12 +76,12 @@ public partial class CustomRounds
 
             if (GlobalCurrentRound.OnlyHeadshot && @event.Hitgroup != 1)
             {
-                player.Health(100);
+                player.Health(@event.Health + @event.DmgHealth);
             }
 
             if (!GlobalCurrentRound.KnifeDamage && @event.Weapon.Contains("knife"))
             {
-                player.Health(100);
+                player.Health(@event.Health + @event.DmgHealth);
             }
 
             return HookResult.Continue;
