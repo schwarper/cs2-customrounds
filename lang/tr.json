@@ -4,8 +4,8 @@
 	"No access": "{white}Bu komutu kullanmaya yetkiniz yok.",
 
 	"Admin set round": "{blue}{0}{white}, sonraki turu {green}{1} {white}olarak ayarladı.",
+	"Admin set inf round": "{blue}{0}{white}, sonraki turu {green}{1} {white}olarak ayarladı. Durduruluna kadar oynanacaktır.",
 
-	"Admin set inf round": "{blue}{0}{white}, sonraki turu {green}{1} {white}olarak ayarladı.",
 	"Next round is": "{white}Sonraki tur {green}{0} {white}olarak ayarlandı.",
 
 	"html_png": "<img src='https://cs2.leadertr.com/images/customrounds/{0}.png'></img>",

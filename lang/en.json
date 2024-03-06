@@ -4,6 +4,8 @@
     "No access": "{white}You are not authorized to use this command.",
 
     "Admin set round": "{blue}{0}{white} has set the next round to {green}{1}{white}",
+    "Admin set inf round": "{blue}{0}{white} has set the next round to {green}{1}{white}. It will be played until stopped.",
+
     "Next round is": "{white}Next round is {green}{0}{white}.",
 
     "html_png": "<img src='https://cs2.leadertr.com/images/customrounds/{0}.png'></img>",
