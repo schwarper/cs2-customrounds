@@ -27,7 +27,7 @@ public partial class CustomRounds
         {
             Dictionary<Round, int> rounds = new();
 
-            int roundcount = Math.Min(5, Config.Rounds?.Values.Count ?? 0);
+            int roundcount = Math.Min(Config.VoteRoundLength, Config.Rounds?.Values.Count ?? 0);
 
             while (rounds.Count < roundcount)
             {

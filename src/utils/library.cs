@@ -1,6 +1,7 @@
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Translations;
+using CounterStrikeSharp.API.Modules.Utils;
 using System.Text;
 
 namespace CustomRounds;
@@ -71,5 +72,29 @@ public partial class CustomRounds : BasePlugin
         }
 
         return 0;
+    }
+
+    private void GiveDefaultWeapon(CCSPlayerController player)
+    {
+        if (player.Team == CsTeam.CounterTerrorist && Config.DefaultCTWeapons.Length > 0)
+        {
+            player.RemoveWeapons();
+            player.GiveWeapon(Config.DefaultCTWeapons);
+        }
+        else if (Config.DefaultTWeapons.Length > 0)
+        {
+            player.RemoveWeapons();
+            player.GiveWeapon(Config.DefaultTWeapons);
+        }
+    }
+
+    private void SetBuyzoneInput(string input)
+    {
+        IEnumerable<CBaseEntity> Sites = Utilities.FindAllEntitiesByDesignerName<CBaseEntity>("func_buyzone");
+
+        foreach (CBaseEntity entity in Sites)
+        {
+            entity.AcceptInput(input);
+        }
     }
 }

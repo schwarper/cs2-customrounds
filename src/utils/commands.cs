@@ -1,3 +1,4 @@
+using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
 using CounterStrikeSharp.API.Modules.Admin;
@@ -28,7 +29,16 @@ public partial class CustomRounds
 
                     GlobalNextRound = round;
 
-                    PrintToChatAll("Admin set round", player.PlayerName, round.Name);
+                    if (command.GetArg(1) == "-i")
+                    {
+                        GlobalInfRound = true;
+                        PrintToChatAll("Admin set inf round", player.PlayerName, round.Name);
+                    }
+                    else
+                    {
+                        GlobalInfRound = false;
+                        PrintToChatAll("Admin set round", player.PlayerName, round.Name);
+                    }
                 });
             }
         }
@@ -50,5 +60,30 @@ public partial class CustomRounds
         }
 
         StartRoundVote();
+    }
+
+    [ConsoleCommand("css_roundend")]
+    [CommandHelper(minArgs: 0, "Ends custom round", whoCanExecute: CommandUsage.CLIENT_ONLY)]
+    public void Command_RoundEnd(CCSPlayerController? player, CommandInfo command)
+    {
+        if (player == null)
+        {
+            return;
+        }
+
+        if (!AdminManager.PlayerHasPermissions(player, Config.AdminFlag))
+        {
+            PrintToChat(player, "No access");
+            return;
+        }
+
+        GlobalCurrentRound = null;
+        GlobalNextRound = null;
+        GlobalInfRound = false;
+
+        foreach (CCSPlayerController target in Utilities.GetPlayers().Where(target => target != null && target.IsValid))
+        {
+            GiveDefaultWeapon(target);
+        }
     }
 }

@@ -1,6 +1,7 @@
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
-using CounterStrikeSharp.API.Modules.Utils;
+using CounterStrikeSharp.API.Modules.Memory;
+using CounterStrikeSharp.API.Modules.Memory.DynamicFunctions;
 using static CounterStrikeSharp.API.Core.Listeners;
 
 namespace CustomRounds;
@@ -36,16 +37,7 @@ public partial class CustomRounds
             {
                 if (GlobalCurrentRound == null)
                 {
-                    if (player.Team == CsTeam.CounterTerrorist && Config.DefaultCTWeapons.Length > 0)
-                    {
-                        player.RemoveWeapons();
-                        player.GiveWeapon(Config.DefaultCTWeapons);
-                    }
-                    else if (Config.DefaultTWeapons.Length > 0)
-                    {
-                        player.RemoveWeapons();
-                        player.GiveWeapon(Config.DefaultTWeapons);
-                    }
+                    GiveDefaultWeapon(player);
 
                     return;
                 }
@@ -87,7 +79,7 @@ public partial class CustomRounds
                 player.Health(100);
             }
 
-            if (GlobalCurrentRound.KnifeDamage && !@event.Weapon.Contains("knife"))
+            if (!GlobalCurrentRound.KnifeDamage && @event.Weapon.Contains("knife"))
             {
                 player.Health(100);
             }
@@ -97,27 +89,25 @@ public partial class CustomRounds
 
         RegisterEventHandler<EventRoundEnd>((@event, info) =>
         {
-            if (Config.VoteRoundCount > 0)
+            if (Config.VoteRoundCount > 0 && !GlobalInfRound)
             {
-                if ((GetTeamScore(3) + GetTeamScore(2)) % Config.VoteRoundCount == 0)
+                int tscore = GetTeamScore(2);
+                int ctscore = GetTeamScore(3);
+
+                if ((tscore + ctscore) > 0 && (tscore + ctscore) % Config.VoteRoundCount == 0)
                 {
                     StartRoundVote();
                 }
             }
 
-            if (GlobalNextRound != null)
+            if (GlobalNextRound != null && !GlobalInfRound)
             {
                 GlobalCurrentRound = GlobalNextRound;
                 GlobalNextRound = null;
 
                 if (GlobalCurrentRound.NoBuy)
                 {
-                    IEnumerable<CBaseEntity> Sites = Utilities.FindAllEntitiesByDesignerName<CBaseEntity>("func_bomb_target");
-
-                    foreach (CBaseEntity entity in Sites)
-                    {
-                        entity.AcceptInput("Disable");
-                    }
+                    SetBuyzoneInput("Disable");
                 }
 
                 Server.ExecuteCommand(GlobalCurrentRound.Cmd);
@@ -126,18 +116,31 @@ public partial class CustomRounds
             {
                 GlobalCurrentRound = null;
 
-                IEnumerable<CBaseEntity> Sites = Utilities.FindAllEntitiesByDesignerName<CBaseEntity>("func_bomb_target");
-
-                foreach (CBaseEntity entity in Sites)
-                {
-                    entity.AcceptInput("Enable");
-                }
+                SetBuyzoneInput("Enable");
 
                 Server.ExecuteCommand(Config.RoundEndCmd);
             }
 
             return HookResult.Continue;
         });
+
+        VirtualFunctions.CCSPlayer_WeaponServices_CanUseFunc.Hook((DynamicHook hook) =>
+        {
+            if (GlobalCurrentRound == null)
+            {
+                return HookResult.Continue;
+            }
+
+            CBasePlayerWeapon clientweapon = hook.GetParam<CBasePlayerWeapon>(1);
+
+            if (GlobalCurrentRound.Weapons.Contains(clientweapon.DesignerName[7..]))
+            {
+                hook.SetReturn(false);
+                return HookResult.Handled;
+            }
+
+            return HookResult.Continue;
+        }, HookMode.Pre);
     }
 
     private void OnTick_NoScope(CCSPlayerController player)
