@@ -5,7 +5,7 @@ A custom round plugin
 ```csharp
 # css_voteround - Start voting for the next custom round
 
-# css_{ShortCut} - Start custom round like "css_dr". You can set it in config.
+# css_{ShortCut} - Start custom round like "css_dr". You can set it in config. ( -i for infinite rounds )
 
 # css_shortlist - Shows all round names and shortcut commands
 ```
