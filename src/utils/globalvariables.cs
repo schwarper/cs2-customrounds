@@ -19,4 +19,5 @@ public partial class CustomRounds
     private bool GlobalIsVoteInProgress = false;
     private bool GlobalInfRound = false;
     private static readonly Random random = new();
+    public CustomRoundsConfig Config { get; set; } = new CustomRoundsConfig();
 }

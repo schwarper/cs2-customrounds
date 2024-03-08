@@ -8,7 +8,7 @@ namespace CustomRounds;
 
 public partial class CustomRounds
 {
-    public void LoadCommands()
+    private void LoadCommands()
     {
         if (Config.Rounds != null)
         {
@@ -85,5 +85,29 @@ public partial class CustomRounds
         {
             GiveDefaultWeapon(target);
         }
+    }
+
+    [ConsoleCommand("css_shortlist")]
+    [CommandHelper(minArgs: 0, "Shows shortcut lists", whoCanExecute: CommandUsage.CLIENT_ONLY)]
+    public void Command_ShortList(CCSPlayerController? player, CommandInfo command)
+    {
+        if (player == null)
+        {
+            return;
+        }
+
+        if (!AdminManager.PlayerHasPermissions(player, Config.AdminFlag))
+        {
+            PrintToChat(player, "No access");
+            return;
+        }
+
+        Server.NextFrame(() =>
+        {
+            foreach (Round round in Config.Rounds.Values)
+            {
+                player.PrintToConsole($"{round.Name} - !{round.Shortcut}");
+            }
+        });
     }
 }

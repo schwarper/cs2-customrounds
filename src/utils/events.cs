@@ -44,6 +44,11 @@ public partial class CustomRounds
 
                 player.RemoveWeapons();
 
+                foreach (string weapon in GlobalCurrentRound.Weapons)
+                {
+                    player.GiveNamedItem(weapon);
+                }
+
                 player.GiveWeapon(GlobalCurrentRound.Weapons);
 
                 if (GlobalCurrentRound.Health > 0)
@@ -133,14 +138,16 @@ public partial class CustomRounds
 
             CBasePlayerWeapon clientweapon = hook.GetParam<CBasePlayerWeapon>(1);
 
-            if (GlobalCurrentRound.Weapons.Contains(clientweapon.DesignerName[7..]))
+            if (GlobalCurrentRound.Weapons.Contains(clientweapon.DesignerName))
             {
-                hook.SetReturn(false);
-                return HookResult.Handled;
+                return HookResult.Continue;
             }
 
-            return HookResult.Continue;
-        }, HookMode.Pre);
+            clientweapon.Remove();
+            hook.SetReturn(false);
+            return HookResult.Handled;
+        },
+        HookMode.Pre);
     }
 
     private void OnTick_NoScope(CCSPlayerController player)
