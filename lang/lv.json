@@ -4,6 +4,8 @@
     "No access": "{white}Tev nav pieejas izmantot šo komandu.",
 
     "Admin set round": "{blue}{0}{white} ir iestatījis nākamo raundu uz {green}{1}{white}",
+    "Admin set inf round": "{blue}{0}{white} ir iestatījis nākamo raundu uz {green}{1}{white}. Jis bus grojamas tol, kol bus sustabdytas.",
+
     "Next round is": "{white}Nākošais raunds būs: {green}{0}{white}.",
 
     "html_png": "<img src='https://cs2.leadertr.com/images/customrounds/{0}.png'></img>",
