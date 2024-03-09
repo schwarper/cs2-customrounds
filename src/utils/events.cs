@@ -114,6 +114,10 @@ public partial class CustomRounds
                 {
                     SetBuyzoneInput("Disable");
                 }
+                else
+                {
+                    SetBuyzoneInput("Enable");
+                }
 
                 Server.ExecuteCommand(GlobalCurrentRound.Cmd);
             }
