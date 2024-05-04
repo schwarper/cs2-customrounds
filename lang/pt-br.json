@@ -1,13 +1,13 @@
 {
-	"Prefix": "{red}[CSS] ",
+	"No access": "{white}Você não está autorizado a usar esse comando.",
 
-	"No access": "{white}Você não está autorizado a usar este comando.",
+	"Admin set round": "{blue}{0}{white} define a próxima rodada como {green}{1}{white}.",
+	"Admin set inf round": "{blue}{0}{white} has set the next round to {green}{1}{white}. It will be played until stopped.",
+	"Admin reset round": "{blue}{0}{white} definiu a próxima rodada como {green}{1}{white}. Ela será jogada até ser interrompida.",
+	"Admin start vote": "{blue}{0}{white}, iniciou a rodada de votação.",
 
-	"Admin set round": "{blue}{0}{white} setou o próximo round para {green}{1}{white}",
-	"Admin set inf round": "{blue}{0}{white} setou o próximo round para {green}{1}{white}. Será reproduzida até ser interrompida.",
+	"Next round is": "{white}A próxima rodada é definida como {green}{0} {white}.",
 
-	"Next round is": "{white}O próximo round será {green}{0}{white}.",
-
-	"html_png": "<img src='https://cs2.leadertr.com/images/customrounds/{0}.png'></img>",
-	"html_customround": "<center><font color='red'>{0}<br><b color='white'>━━━━━━━━━━━━━━━━━━━━━━━━<</b></center><br>"
+	"html_customround": "<center><font color='red'>{0}<br><b color='white'>━━━━━━━━━━━━━━━━━━━━━━━━<</b></center><br>",
+	"html_png": "<img src='https://cs2.leadertr.com/images/customrounds/{0}.png'></img>"
 }

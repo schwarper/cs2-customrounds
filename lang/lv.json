@@ -1,13 +1,13 @@
 {
-    "Prefix": "{red}[CSS] ",
-
     "No access": "{white}Tev nav pieejas izmantot šo komandu.",
 
     "Admin set round": "{blue}{0}{white} ir iestatījis nākamo raundu uz {green}{1}{white}",
     "Admin set inf round": "{blue}{0}{white} ir iestatījis nākamo raundu uz {green}{1}{white}. Jis bus grojamas tol, kol bus sustabdytas.",
+    "Admin reset round": "{blue}{0}{white}, atjaunoja raundu.",
+    "Admin start vote": "{blue}{0}{white}, sāka balsošanas kārtu.",
 
     "Next round is": "{white}Nākošais raunds būs: {green}{0}{white}.",
 
-    "html_png": "<img src='https://cs2.leadertr.com/images/customrounds/{0}.png'></img>",
-    "html_customround": "<center><font color='red'>{0}<br><b color='white'>━━━━━━━━━━━━━━━━━━━━━━━━<</b></center><br>"
+    "html_customround": "<center><font color='red'>{0}<br><b color='white'>━━━━━━━━━━━━━━━━━━━━━━━━<</b></center><br>",
+    "html_png": "<img src='https://cs2.leadertr.com/images/customrounds/{0}.png'></img>"
 }
