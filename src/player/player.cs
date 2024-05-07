@@ -5,10 +5,6 @@ namespace CustomRounds;
 
 public static class PlayerUtils
 {
-    static public bool Valid(this CCSPlayerController player)
-    {
-        return player.IsValid && player.SteamID.ToString().Length == 17;
-    }
     static public void Health(this CCSPlayerController player, int health)
     {
         if (player.PlayerPawn == null || player.PlayerPawn.Value == null)
@@ -19,13 +15,17 @@ public static class PlayerUtils
         player.Health = health;
         player.PlayerPawn.Value.Health = health;
 
-        if (health > 100)
+        Utilities.SetStateChanged(player.PlayerPawn.Value, "CBaseEntity", "m_iHealth");
+    }
+    static public void MaxHealth(this CCSPlayerController player, int maxhealth)
+    {
+        if (player.PlayerPawn == null || player.PlayerPawn.Value == null)
         {
-            player.MaxHealth = health;
-            player.PlayerPawn.Value.MaxHealth = health;
+            return;
         }
 
-        Utilities.SetStateChanged(player.PlayerPawn.Value, "CBaseEntity", "m_iHealth");
+        player.MaxHealth = maxhealth;
+        player.PlayerPawn.Value.MaxHealth = maxhealth;
     }
     static public void Speed(this CCSPlayerPawn pawn, float speed)
     {
