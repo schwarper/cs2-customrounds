@@ -26,7 +26,6 @@
     "how_many_rounds": 2,
 
     "rounds": {
-        "rounds": {
             "1": {
                 "Name": "[Only HS] Deagle",
                 "Weapons": [
@@ -152,5 +151,4 @@
                 "CenterMsg": "html_customround"
             }
         }
-    }
 }
