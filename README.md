@@ -1,6 +1,12 @@
 # cs2-customrounds
 A custom round plugin where open and play custom rounds based on voting results or special commands.
 
+If you want to donate or need a help about plugin, you can contact me in discord private/server
+
+Discord nickname: schwarper
+
+Discord link : [Discord server](https://discord.gg/4zQfUzjk36)
+
 ## Commands
 ```csharp
 # css_voteround - This starts voting for the next custom round.
