@@ -281,6 +281,9 @@ public static class Event
             return;
         }
 
+        if (player is null || !player.IsValid || player.IsBot || player.IsHLTV)
+          return;
+        
         Library.PrintToCenterHtml(player);
     }
 }
