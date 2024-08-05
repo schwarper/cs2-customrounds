@@ -4,11 +4,26 @@ using CounterStrikeSharp.API.Modules.Memory;
 using CounterStrikeSharp.API.Modules.Memory.DynamicFunctions;
 using static CounterStrikeSharp.API.Core.Listeners;
 using static CustomRounds.CustomRounds;
+using static CustomRounds.Round;
 
 namespace CustomRounds;
 
 public static class Event
 {
+    public static readonly string[] GlobalScopeWeapons =
+    [
+        "weapon_ssg08",
+        "weapon_awp",
+        "weapon_scar20",
+        "weapon_g3sg1",
+        "weapon_sg553",
+        "weapon_sg556",
+        "weapon_aug",
+        "weapon_ssg08"
+    ];
+
+    public static float GlobalHtmlDisplayTime = 0;
+
     public static void Load()
     {
         Instance.RegisterListener<OnTick>(OnTick);
@@ -16,9 +31,9 @@ public static class Event
         VirtualFunctions.CBaseEntity_TakeDamageOldFunc.Hook(OnTakeDamage, HookMode.Pre);
 
         Instance.RegisterEventHandler<EventPlayerSpawn>(OnPlayerSpawn);
+        Instance.RegisterEventHandler<EventRoundStart>(OnRoundStart);
         Instance.RegisterEventHandler<EventRoundEnd>(OnRoundEnd);
         Instance.RegisterEventHandler<EventWeaponFire>(OnWeaponFire);
-        //Instance.RegisterEventHandler<EventGrenadeThrown>(OnGrenadeThrown);
     }
 
     public static void Unload()
@@ -30,12 +45,12 @@ public static class Event
 
     public static void OnTick()
     {
-        if (Instance.GlobalCurrentRound == null)
+        if (GlobalCurrentRound == null)
         {
             return;
         }
 
-        var players = Utilities.GetPlayers();
+        List<CCSPlayerController> players = Utilities.GetPlayers().Where(p => p.IsValid && !p.IsBot).ToList();
 
         foreach (CCSPlayerController? player in players)
         {
@@ -50,14 +65,14 @@ public static class Event
 
     public static HookResult CanUseFunc(DynamicHook hook)
     {
-        if (Instance.GlobalCurrentRound == null)
+        if (GlobalCurrentRound == null)
         {
             return HookResult.Continue;
         }
 
         CBasePlayerWeapon clientweapon = hook.GetParam<CBasePlayerWeapon>(1);
 
-        foreach (string weapon in Instance.GlobalCurrentRound.Weapons)
+        foreach (string weapon in GlobalCurrentRound.Weapons)
         {
             string weaponname = weapon;
 
@@ -84,14 +99,14 @@ public static class Event
 
     public static HookResult OnTakeDamage(DynamicHook hook)
     {
-        if (Instance.GlobalCurrentRound == null)
+        if (GlobalCurrentRound == null)
         {
             return HookResult.Continue;
         }
 
-        var info = hook.GetParam<CTakeDamageInfo>(1);
+        CTakeDamageInfo info = hook.GetParam<CTakeDamageInfo>(1);
 
-        if (info.Ability.Value?.DesignerName.Contains("knife") is true && Instance.GlobalCurrentRound.KnifeDamage is not true)
+        if (info.Ability.Value?.DesignerName.Contains("knife") is true && GlobalCurrentRound.KnifeDamage is not true)
         {
             hook.SetReturn(false);
             return HookResult.Handled;
@@ -99,11 +114,17 @@ public static class Event
 
         static unsafe HitGroup_t GetHitGroup(DynamicHook hook)
         {
-            var info = hook.GetParam<nint>(1);
+            nint info = hook.GetParam<nint>(1);
             nint v4 = *(nint*)(info + 0x68);
+
+            if (v4 == nint.Zero)
+            {
+                return HitGroup_t.HITGROUP_INVALID;
+            }
+
             nint v1 = *(nint*)(v4 + 16);
 
-            var hitgroup = HitGroup_t.HITGROUP_GENERIC;
+            HitGroup_t hitgroup = HitGroup_t.HITGROUP_GENERIC;
 
             if (v1 != nint.Zero)
             {
@@ -113,7 +134,7 @@ public static class Event
             return hitgroup;
         }
 
-        if (Instance.GlobalCurrentRound.OnlyHeadshot is true && GetHitGroup(hook) != HitGroup_t.HITGROUP_HEAD)
+        if (GlobalCurrentRound.OnlyHeadshot is true && GetHitGroup(hook) != HitGroup_t.HITGROUP_HEAD)
         {
             hook.SetReturn(false);
             return HookResult.Handled;
@@ -131,9 +152,9 @@ public static class Event
             return HookResult.Continue;
         }
 
-        _ = Instance.AddTimer(Instance.Config.OnSpawnDelay, () =>
+        Instance.AddTimer(Instance.Config.OnSpawnDelay, () =>
         {
-            if (Instance.GlobalCurrentRound == null)
+            if (GlobalCurrentRound == null)
             {
                 Library.GiveDefaultWeapon(player);
 
@@ -142,24 +163,24 @@ public static class Event
 
             player.RemoveWeapons();
 
-            foreach (string weapon in Instance.GlobalCurrentRound.Weapons)
+            foreach (string weapon in GlobalCurrentRound.Weapons)
             {
                 player.GiveNamedItem(weapon);
             }
 
-            player.GiveWeapon(Instance.GlobalCurrentRound.Weapons);
+            player.GiveWeapon(GlobalCurrentRound.Weapons);
 
-            if (Instance.GlobalCurrentRound.MaxHealth is int maxhealth)
+            if (GlobalCurrentRound.MaxHealth is int maxhealth)
             {
                 player.MaxHealth(maxhealth);
             }
 
-            if (Instance.GlobalCurrentRound.Health is int health and > 0)
+            if (GlobalCurrentRound.Health is int health and > 0)
             {
                 player.Health(health);
             }
 
-            if (Instance.GlobalCurrentRound.Speed is float speed)
+            if (GlobalCurrentRound.Speed is float speed)
             {
                 player.PlayerPawn?.Value?.Speed(speed);
             }
@@ -168,9 +189,22 @@ public static class Event
         return HookResult.Continue;
     }
 
+    public static HookResult OnRoundStart(EventRoundStart @event, GameEventInfo info)
+    {
+        if (GlobalRoundCount == -1)
+        {
+            return HookResult.Continue;
+        }
+
+        float htmlTime = Instance.Config.HtmlDisplayTime;
+        GlobalHtmlDisplayTime = htmlTime == -1 ? -1 : Server.CurrentTime + htmlTime;
+
+        return HookResult.Continue;
+    }
+
     public static HookResult OnRoundEnd(EventRoundEnd @event, GameEventInfo info)
     {
-        if (Instance.GlobalRoundCount == -1)
+        if (GlobalRoundCount == -1)
         {
             return HookResult.Continue;
         }
@@ -185,22 +219,23 @@ public static class Event
             }
         }
 
-        if (Instance.GlobalNextRound != null)
+        if (GlobalNextRound != null)
         {
-            Round.Set(Instance.GlobalNextRound);
+            GlobalHtmlDisplayTime = Server.CurrentTime - 1;
+            Set(GlobalNextRound);
             return HookResult.Continue;
         }
 
-        if (Instance.GlobalCurrentRound == null)
+        if (GlobalCurrentRound == null)
         {
             return HookResult.Continue;
         }
 
-        Instance.GlobalRoundCount--;
+        GlobalRoundCount--;
 
-        if (Instance.GlobalRoundCount == 0)
+        if (GlobalRoundCount == 0)
         {
-            Round.Reset(false);
+            Reset(false);
         }
 
         return HookResult.Continue;
@@ -208,7 +243,7 @@ public static class Event
 
     public static HookResult OnWeaponFire(EventWeaponFire @event, GameEventInfo info)
     {
-        if (Instance.GlobalCurrentRound == null || Instance.GlobalCurrentRound.UnlimitedAmmo is not true)
+        if (GlobalCurrentRound == null || GlobalCurrentRound.UnlimitedAmmo is not true)
         {
             return HookResult.Continue;
         }
@@ -225,36 +260,9 @@ public static class Event
         return HookResult.Continue;
     }
 
-    /*
-    public static HookResult OnGrenadeThrown(EventGrenadeThrown @event, GameEventInfo info)
-    {
-        if (Instance.GlobalCurrentRound == null || Instance.GlobalCurrentRound.UnlimitedGrenade is not true)
-        {
-            return HookResult.Continue;
-        }
-
-        CCSPlayerController? player = @event.Userid;
-
-        if (player == null || !player.IsValid)
-        {
-            return HookResult.Continue;
-        }
-
-        string weaponname = @event.Weapon;
-
-        Server.NextFrame(() =>
-        {
-            player?.PlayerPawn.Value?.ItemServices?.As<CCSPlayer_ItemServices>().GiveNamedItem<CEntityInstance>($"weapon_{weaponname}");
-
-        });
-
-        return HookResult.Continue;
-    }
-    */
-
     public static void OnTick_NoScope(CCSPlayerController player)
     {
-        if (Instance.GlobalCurrentRound!.NoScope is not true)
+        if (GlobalCurrentRound!.NoScope is not true)
         {
             return;
         }
@@ -266,7 +274,7 @@ public static class Event
             return;
         }
 
-        if (!Instance.GlobalScopeWeapons.Contains(activeweapon.DesignerName))
+        if (!GlobalScopeWeapons.Contains(activeweapon.DesignerName))
         {
             return;
         }
@@ -276,14 +284,19 @@ public static class Event
 
     public static void OnTick_CenterMsg(CCSPlayerController player)
     {
-        if (string.IsNullOrEmpty(Instance.GlobalCurrentRound!.CenterMsg))
+        if (string.IsNullOrEmpty(GlobalCurrentRound!.CenterMsg))
         {
             return;
         }
 
-        if (player is null || !player.IsValid || player.IsBot || player.IsHLTV)
-          return;
-        
+        if (GlobalHtmlDisplayTime != -1)
+        {
+            if (GlobalHtmlDisplayTime - Server.CurrentTime < 0)
+            {
+                return;
+            }
+        }
+
         Library.PrintToCenterHtml(player);
     }
 }

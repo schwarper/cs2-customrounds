@@ -7,25 +7,29 @@ public static class PlayerUtils
 {
     static public void Health(this CCSPlayerController player, int health)
     {
-        if (player.PlayerPawn == null || player.PlayerPawn.Value == null)
+        var playerPawn = player.PlayerPawn.Value;
+
+        if (playerPawn == null)
         {
             return;
         }
 
         player.Health = health;
-        player.PlayerPawn.Value.Health = health;
+        playerPawn.Health = health;
 
-        Utilities.SetStateChanged(player.PlayerPawn.Value, "CBaseEntity", "m_iHealth");
+        Utilities.SetStateChanged(playerPawn, "CBaseEntity", "m_iHealth");
     }
     static public void MaxHealth(this CCSPlayerController player, int maxhealth)
     {
-        if (player.PlayerPawn == null || player.PlayerPawn.Value == null)
+        var playerPawn = player.PlayerPawn.Value;
+
+        if (playerPawn == null)
         {
             return;
         }
 
         player.MaxHealth = maxhealth;
-        player.PlayerPawn.Value.MaxHealth = maxhealth;
+        playerPawn.MaxHealth = maxhealth;
     }
     static public void Speed(this CCSPlayerPawn pawn, float speed)
     {
