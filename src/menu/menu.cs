@@ -2,11 +2,13 @@ using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Menu;
 using static CustomRounds.CustomRounds;
+using static CustomRounds.Round;
 
 namespace CustomRounds;
 
 public static class Menu
 {
+    public static Random Random { get; set; } = new();
     public static void StartRoundVote()
     {
         if (Instance.Config.Rounds == null)
@@ -14,7 +16,7 @@ public static class Menu
             return;
         }
 
-        if (Instance.GlobalIsVoteInProgress)
+        if (GlobalIsVoteInProgress)
         {
             return;
         }
@@ -28,11 +30,11 @@ public static class Menu
         {
             Dictionary<RoundInfo, int> rounds = [];
 
-            int roundcount = Math.Min(Instance.Config.VoteRoundLength, Instance.Config.Rounds?.Values.Count ?? 0);
+            int roundcount = Math.Min(Instance.Config.HowManyRoundsInVote, Instance.Config.Rounds?.Values.Count ?? 0);
 
             while (rounds.Count < roundcount)
             {
-                RoundInfo round = Instance.Config.Rounds!.Values.ElementAt(Instance.Random.Next(Instance.Config.Rounds.Values.Count));
+                RoundInfo round = Instance.Config.Rounds!.Values.ElementAt(Random.Next(Instance.Config.Rounds.Values.Count));
 
                 rounds.TryAdd(round, 0);
             }
@@ -61,20 +63,20 @@ public static class Menu
             });
         }
 
-        var allplayers = Utilities.GetPlayers();
+        List<CCSPlayerController> allplayers = Utilities.GetPlayers();
 
         foreach (CCSPlayerController target in allplayers)
         {
             MenuManager.OpenCenterHtmlMenu(Instance, target, menu);
         }
 
-        Instance.GlobalIsVoteInProgress = true;
+        GlobalIsVoteInProgress = true;
 
         Instance.AddTimer(15.0f, () =>
         {
             RoundInfo round = rounds.OrderByDescending(kv => kv.Value).FirstOrDefault().Key;
 
-            Round.SetNext(round, Instance.Config.HowManyRounds);
+            SetNext(round, Instance.Config.HowManyRoundsLast);
 
             Library.PrintToChatAll("Next round is", round.Name);
 
@@ -85,7 +87,7 @@ public static class Menu
                 MenuManager.CloseActiveMenu(player);
             }
 
-            Instance.GlobalIsVoteInProgress = false;
+            GlobalIsVoteInProgress = false;
         });
     }
 }

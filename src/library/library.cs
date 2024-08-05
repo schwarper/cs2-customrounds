@@ -13,20 +13,20 @@ public static class Library
     {
         using (new WithTemporaryCulture(player.GetLanguage()))
         {
-            StringBuilder builder = new(Instance.Config.Prefix);
+            StringBuilder builder = new(Instance.Config.Tag);
             builder.AppendFormat(Instance.Localizer[message], args);
             player.PrintToChat(builder.ToString());
         }
     }
     public static void PrintToChatAll(string message, params object[] args)
     {
-        var players = Utilities.GetPlayers();
+        List<CCSPlayerController> players = Utilities.GetPlayers().Where(p => p.IsValid && !p.IsBot).ToList();
 
         foreach (CCSPlayerController player in players)
         {
             using (new WithTemporaryCulture(player.GetLanguage()))
             {
-                StringBuilder builder = new(Instance.Config.Prefix);
+                StringBuilder builder = new(Instance.Config.Tag);
                 builder.AppendFormat(Instance.Localizer[message], args);
                 player.PrintToChat(builder.ToString());
             }
@@ -36,11 +36,11 @@ public static class Library
     {
         using (new WithTemporaryCulture(player.GetLanguage()))
         {
-            StringBuilder builder = new(Instance.Localizer[Instance.GlobalCurrentRound!.CenterMsg!, Instance.GlobalCurrentRound.Name]);
+            StringBuilder builder = new(Instance.Localizer[Round.GlobalCurrentRound!.CenterMsg!, Round.GlobalCurrentRound.Name]);
 
-            foreach (string weapon in Instance.GlobalCurrentRound.Weapons)
+            foreach (string weapon in Round.GlobalCurrentRound.Weapons)
             {
-                if (weapon.Contains("knife") && Instance.GlobalCurrentRound.KnifeDamage is not true)
+                if (weapon.Contains("knife") && Round.GlobalCurrentRound.KnifeDamage is not true)
                 {
                     continue;
                 }
@@ -48,12 +48,12 @@ public static class Library
                 builder.Append(Instance.Localizer["html_png", weapon.Replace("weapon_", "")]);
             }
 
-            if (Instance.GlobalCurrentRound.NoScope is true)
+            if (Round.GlobalCurrentRound.NoScope is true)
             {
                 builder.Append(Instance.Localizer["html_png", "noscope"]);
             }
 
-            if (Instance.GlobalCurrentRound.OnlyHeadshot is true)
+            if (Round.GlobalCurrentRound.OnlyHeadshot is true)
             {
                 builder.Append(Instance.Localizer["html_png", "headshot"]);
             }
@@ -67,14 +67,17 @@ public static class Library
         tscore = 0;
         ctscore = 0;
 
-        var csteammanager = Utilities.FindAllEntitiesByDesignerName<CCSTeam>("cs_team_manager");
+        var csteammanager = Utilities.FindAllEntitiesByDesignerName<CCSTeam>("cs_team_manager").ToList();
 
-        foreach (CCSTeam team in csteammanager)
+        if (csteammanager.Count > 0)
         {
-            switch (team.TeamNum)
+            foreach (CCSTeam team in csteammanager)
             {
-                case 1: tscore = team.Score; break;
-                case 2: ctscore = team.Score; break;
+                switch (team.TeamNum)
+                {
+                    case 2: tscore = team.Score; break;
+                    case 3: ctscore = team.Score; break;
+                }
             }
         }
     }
@@ -95,11 +98,14 @@ public static class Library
 
     public static void SetBuyzoneInput(string input)
     {
-        IEnumerable<CBaseEntity> buyzones = Utilities.FindAllEntitiesByDesignerName<CBaseEntity>("func_buyzone");
+        var buyzones = Utilities.FindAllEntitiesByDesignerName<CBaseEntity>("func_buyzone").ToList();
 
-        foreach (CBaseEntity buyzone in buyzones)
+        if (buyzones.Count > 0)
         {
-            buyzone.AcceptInput(input);
+            foreach (CBaseEntity buyzone in buyzones)
+            {
+                buyzone.AcceptInput(input);
+            }
         }
     }
 }

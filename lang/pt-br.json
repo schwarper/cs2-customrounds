@@ -9,5 +9,5 @@
 	"Next round is": "{white}A próxima rodada é definida como {green}{0} {white}.",
 
 	"html_customround": "<center><font color='red'>{0}<br><b color='white'>━━━━━━━━━━━━━━━━━━━━━━━━<</b></center><br>",
-	"html_png": "<img src='https://cs2.leadertr.com/images/customrounds/{0}.png'></img>"
+	"html_png": "<img src='https://raw.githubusercontent.com/schwarper/cs2-customrounds/main/img/{0}.png'></img>"
 }
