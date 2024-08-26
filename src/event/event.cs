@@ -273,7 +273,7 @@ public static class Event
 
     public static void OnEntitySpawned(CEntityInstance entity)
     {
-        if (GlobalCurrentRound == null || GlobalCurrentRound.NoScope != true)
+        if (GlobalCurrentRound == null)
             return;
 
         if (entity == null || entity.Entity == null)
