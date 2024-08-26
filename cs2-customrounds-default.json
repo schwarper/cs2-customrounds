@@ -46,6 +46,8 @@
             "NoScope": true,
             "NoBuy": true,
             "UnlimitedAmmo": true,
+            "Kevlar": 100,
+            "Helmet": true,
             "CenterMsg": "html_customround"
         },
         "3": {
