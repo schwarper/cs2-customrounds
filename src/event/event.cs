@@ -34,6 +34,7 @@ public static class Event
         Instance.RegisterEventHandler<EventRoundStart>(OnRoundStart);
         Instance.RegisterEventHandler<EventRoundEnd>(OnRoundEnd);
         Instance.RegisterEventHandler<EventWeaponFire>(OnWeaponFire);
+        Instance.RegisterListener<OnEntitySpawned>(OnEntitySpawned);
     }
 
     public static void Unload()
@@ -180,6 +181,16 @@ public static class Event
                 player.Health(health);
             }
 
+            if (GlobalCurrentRound.Kevlar is int kevlar and > 0)
+            {
+                player.Kevlar(kevlar);
+            }
+
+            if (GlobalCurrentRound.Helmet is bool helmet)
+            {
+                player.Helmet();
+            }
+
             if (GlobalCurrentRound.Speed is float speed)
             {
                 player.PlayerPawn?.Value?.Speed(speed);
@@ -258,6 +269,23 @@ public static class Event
         activeweapon.Clip1 += 1;
 
         return HookResult.Continue;
+    }
+
+    public static void OnEntitySpawned(CEntityInstance entity)
+    {
+        if (GlobalCurrentRound == null)
+            return;
+
+        if (entity == null || entity.Entity == null)
+            return;
+
+        if (string.IsNullOrEmpty(entity.DesignerName) || !entity.DesignerName.StartsWith("weapon_"))
+            return;
+
+        if (!GlobalCurrentRound.Weapons.Contains(entity.DesignerName))
+        {
+            entity.Remove();
+        }
     }
 
     public static void OnTick_NoScope(CCSPlayerController player)
