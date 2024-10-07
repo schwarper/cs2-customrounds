@@ -16,5 +16,6 @@ public class Config : BasePluginConfig
     [JsonPropertyName("OnSpawnDelay")] public float OnSpawnDelay { get; set; } = 0.1f;
     [JsonPropertyName("HowManyRoundsLast")] public int HowManyRoundsLast { get; set; } = 2;
     [JsonPropertyName("HtmlDisplayTime")] public float HtmlDisplayTime { get; set; } = -1;
+    [JsonPropertyName("DuelSupport")] public bool DuelSupport { get; set; } = true;
     [JsonPropertyName("Rounds")] public Dictionary<string, RoundInfo> Rounds { get; set; } = [];
 }

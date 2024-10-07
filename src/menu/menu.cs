@@ -9,6 +9,7 @@ namespace CustomRounds;
 public static class Menu
 {
     public static Random Random { get; set; } = new();
+
     public static void StartRoundVote()
     {
         if (Instance.Config.Rounds == null)
@@ -78,7 +79,7 @@ public static class Menu
 
             SetNext(round, Instance.Config.HowManyRoundsLast);
 
-            Library.PrintToChatAll("Next round is", round.Name);
+            Library.SendMessageToAllPlayers("Next round is", round.Name);
 
             allplayers = Utilities.GetPlayers();
 

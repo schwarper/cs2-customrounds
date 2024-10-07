@@ -22,26 +22,53 @@ public static class Event
         "weapon_ssg08"
     ];
 
-    public static float GlobalHtmlDisplayTime = 0;
+    private static float GlobalHtmlDisplayTime = 0;
+
+    private enum AcquireMethod : int
+    {
+        PickUp = 0,
+        Buy,
+    };
+
+    private enum AcquireResult : int
+    {
+        Allowed = 0,
+        InvalidItem,
+        AlreadyOwned,
+        AlreadyPurchased,
+        ReachedGrenadeTypeLimit,
+        ReachedGrenadeTotalLimit,
+        NotAllowedByTeam,
+        NotAllowedByMap,
+        NotAllowedByMode,
+        NotAllowedForPurchase,
+        NotAllowedByProhibition,
+    };
+
+    private static readonly MemoryFunctionWithReturn<int, string, CCSWeaponBaseVData> GetCSWeaponDataFromKeyFunc =
+        new(GameData.GetSignature("GetCSWeaponDataFromKey"));
+
+    private static readonly MemoryFunctionWithReturn<CCSPlayer_ItemServices, CEconItemView, AcquireMethod, NativeObject, AcquireResult> CCSPlayer_CanAcquireFunc =
+        new(GameData.GetSignature("CCSPlayer_CanAcquire"));
 
     public static void Load()
     {
         Instance.RegisterListener<OnTick>(OnTick);
-        VirtualFunctions.CCSPlayer_WeaponServices_CanUseFunc.Hook(CanUseFunc, HookMode.Pre);
         VirtualFunctions.CBaseEntity_TakeDamageOldFunc.Hook(OnTakeDamage, HookMode.Pre);
+        CCSPlayer_CanAcquireFunc.Hook(OnWeaponCanAcquire, HookMode.Pre);
 
         Instance.RegisterEventHandler<EventPlayerSpawn>(OnPlayerSpawn);
         Instance.RegisterEventHandler<EventRoundStart>(OnRoundStart);
         Instance.RegisterEventHandler<EventRoundEnd>(OnRoundEnd);
         Instance.RegisterEventHandler<EventWeaponFire>(OnWeaponFire);
-        Instance.RegisterListener<OnEntitySpawned>(OnEntitySpawned);
+        Instance.RegisterEventHandler<EventPlayerDeath>(OnPlayerDeath);
     }
 
     public static void Unload()
     {
         Instance.RemoveListener<OnTick>(OnTick);
-        VirtualFunctions.CCSPlayer_WeaponServices_CanUseFunc.Unhook(CanUseFunc, HookMode.Pre);
         VirtualFunctions.CBaseEntity_TakeDamageOldFunc.Unhook(OnTakeDamage, HookMode.Pre);
+        CCSPlayer_CanAcquireFunc.Unhook(OnWeaponCanAcquire, HookMode.Pre);
     }
 
     public static void OnTick()
@@ -51,10 +78,15 @@ public static class Event
             return;
         }
 
-        List<CCSPlayerController> players = Utilities.GetPlayers().Where(p => p.IsValid && !p.IsBot).ToList();
-
-        foreach (CCSPlayerController? player in players)
+        for (int i = 0; i < Server.MaxPlayers; i++)
         {
+            CCSPlayerController? player = Utilities.GetEntityFromIndex<CCSPlayerController>(i + 1);
+
+            if (player?.IsValid is not true || player.IsBot || player.DesignerName != Library.playerdesignername)
+            {
+                continue;
+            }
+
             OnTick_CenterMsg(player);
 
             if (player.PawnIsAlive)
@@ -64,37 +96,21 @@ public static class Event
         }
     }
 
-    public static HookResult CanUseFunc(DynamicHook hook)
+    public static HookResult OnWeaponCanAcquire(DynamicHook hook)
     {
         if (GlobalCurrentRound == null)
         {
             return HookResult.Continue;
         }
 
-        CBasePlayerWeapon clientweapon = hook.GetParam<CBasePlayerWeapon>(1);
+        CCSWeaponBaseVData vdata = GetCSWeaponDataFromKeyFunc.Invoke(-1, hook.GetParam<CEconItemView>(1).ItemDefinitionIndex.ToString()) ?? throw new Exception("Failed to get CCSWeaponBaseVData");
 
-        foreach (string weapon in GlobalCurrentRound.Weapons)
+        if (GlobalCurrentRound.Weapons.Contains(vdata.Name))
         {
-            string weaponname = weapon;
-
-            if (weapon.Contains("usp"))
-            {
-                weaponname = "hkp2000";
-            }
-            else if (weapon.Contains("m4a1"))
-            {
-                weaponname = "m4a1";
-            }
-
-            if (clientweapon.DesignerName.Contains(weaponname))
-            {
-                return HookResult.Continue;
-            }
+            return HookResult.Continue;
         }
 
-        clientweapon.Remove();
-        hook.SetReturn(false);
-
+        hook.SetReturn(AcquireResult.NotAllowedByProhibition);
         return HookResult.Handled;
     }
 
@@ -116,7 +132,7 @@ public static class Event
         static unsafe HitGroup_t GetHitGroup(DynamicHook hook)
         {
             nint info = hook.GetParam<nint>(1);
-            nint v4 = *(nint*)(info + 0x68);
+            nint v4 = *(nint*)(info + 0x78);
 
             if (v4 == nint.Zero)
             {
@@ -146,19 +162,27 @@ public static class Event
 
     public static HookResult OnPlayerSpawn(EventPlayerSpawn @event, GameEventInfo info)
     {
-        CCSPlayerController? player = @event.Userid;
-
-        if (player == null)
+        if (@event.Userid is not CCSPlayerController player)
         {
             return HookResult.Continue;
         }
 
         Instance.AddTimer(Instance.Config.OnSpawnDelay, () =>
         {
+            if (!player.IsValid)
+            {
+                return;
+            }
+
             if (GlobalCurrentRound == null)
             {
                 Library.GiveDefaultWeapon(player);
 
+                return;
+            }
+
+            if (player.PlayerPawn.Value is not CCSPlayerPawn playerPawn)
+            {
                 return;
             }
 
@@ -173,22 +197,22 @@ public static class Event
 
             if (GlobalCurrentRound.MaxHealth is int maxhealth)
             {
-                player.MaxHealth(maxhealth);
+                player.MaxHealth(playerPawn, maxhealth);
             }
 
             if (GlobalCurrentRound.Health is int health and > 0)
             {
-                player.Health(health);
+                player.Health(playerPawn, health);
             }
 
             if (GlobalCurrentRound.Kevlar is int kevlar and > 0)
             {
-                player.Kevlar(kevlar);
+                playerPawn.Kevlar(kevlar);
             }
 
             if (GlobalCurrentRound.Helmet is bool helmet)
             {
-                player.Helmet();
+                playerPawn.Helmet();
             }
 
             if (GlobalCurrentRound.Speed is float speed)
@@ -259,9 +283,7 @@ public static class Event
             return HookResult.Continue;
         }
 
-        CBasePlayerWeapon? activeweapon = @event.Userid?.PlayerPawn.Value?.WeaponServices?.ActiveWeapon.Value;
-
-        if (activeweapon == null)
+        if (@event.Userid?.PlayerPawn.Value?.WeaponServices?.ActiveWeapon.Value is not CBasePlayerWeapon activeweapon)
         {
             return HookResult.Continue;
         }
@@ -271,21 +293,21 @@ public static class Event
         return HookResult.Continue;
     }
 
-    public static void OnEntitySpawned(CEntityInstance entity)
+    public static HookResult OnPlayerDeath(EventPlayerDeath @event, GameEventInfo info)
     {
-        if (GlobalCurrentRound == null)
-            return;
-
-        if (entity == null || entity.Entity == null)
-            return;
-
-        if (string.IsNullOrEmpty(entity.DesignerName) || !entity.DesignerName.StartsWith("weapon_"))
-            return;
-
-        if (!GlobalCurrentRound.Weapons.Contains(entity.DesignerName))
+        if (GlobalCurrentRound == null || !Instance.Config.DuelSupport)
         {
-            entity.Remove();
+            return HookResult.Continue;
         }
+
+        var playersCount = Utilities.GetPlayers().Where(p => p.PawnIsAlive && p != @event.Userid).Count();
+
+        if (playersCount == 2)
+        {
+            Reset(false);
+        }
+
+        return HookResult.Continue;
     }
 
     public static void OnTick_NoScope(CCSPlayerController player)
@@ -295,9 +317,7 @@ public static class Event
             return;
         }
 
-        CBasePlayerWeapon? activeweapon = player.PlayerPawn?.Value?.WeaponServices?.ActiveWeapon.Value;
-
-        if (activeweapon == null)
+        if (player.PlayerPawn.Value?.WeaponServices?.ActiveWeapon.Value is not CBasePlayerWeapon activeweapon)
         {
             return;
         }
@@ -317,12 +337,11 @@ public static class Event
             return;
         }
 
-        if (GlobalHtmlDisplayTime != -1)
+        var htmldisplaytime = GlobalHtmlDisplayTime;
+
+        if (htmldisplaytime != -1 && htmldisplaytime - Server.CurrentTime < 0)
         {
-            if (GlobalHtmlDisplayTime - Server.CurrentTime < 0)
-            {
-                return;
-            }
+            return;
         }
 
         Library.PrintToCenterHtml(player);

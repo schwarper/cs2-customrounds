@@ -1,7 +1,9 @@
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Translations;
+using CounterStrikeSharp.API.Modules.Memory;
 using CounterStrikeSharp.API.Modules.Utils;
+using Microsoft.Extensions.Localization;
 using System.Text;
 using static CustomRounds.CustomRounds;
 
@@ -9,29 +11,32 @@ namespace CustomRounds;
 
 public static class Library
 {
-    public static void PrintToChat(CCSPlayerController player, string message, params object[] args)
+    public const string playerdesignername = "cs_player_controller";
+
+    public static void SendMessageToPlayer(CCSPlayerController player, string messageKey, params object[] args)
     {
         using (new WithTemporaryCulture(player.GetLanguage()))
         {
-            StringBuilder builder = new(Instance.Config.Tag);
-            builder.AppendFormat(Instance.Localizer[message], args);
-            player.PrintToChat(builder.ToString());
+            LocalizedString message = Instance.Localizer[messageKey, args];
+            VirtualFunctions.ClientPrint(player.Handle, HudDestination.Chat, Instance.Config.Tag + message, 0, 0, 0, 0);
         }
     }
-    public static void PrintToChatAll(string message, params object[] args)
-    {
-        List<CCSPlayerController> players = Utilities.GetPlayers().Where(p => p.IsValid && !p.IsBot).ToList();
 
-        foreach (CCSPlayerController player in players)
+    public static void SendMessageToAllPlayers(string messageKey, params object[] args)
+    {
+        for (int i = 0; i < Server.MaxPlayers; i++)
         {
-            using (new WithTemporaryCulture(player.GetLanguage()))
+            CCSPlayerController? player = Utilities.GetEntityFromIndex<CCSPlayerController>(i + 1);
+
+            if (player?.IsValid is not true || player.IsBot || player.DesignerName != playerdesignername)
             {
-                StringBuilder builder = new(Instance.Config.Tag);
-                builder.AppendFormat(Instance.Localizer[message], args);
-                player.PrintToChat(builder.ToString());
+                continue;
             }
+
+            SendMessageToPlayer(player, messageKey, args);
         }
     }
+
     public static void PrintToCenterHtml(CCSPlayerController player)
     {
         using (new WithTemporaryCulture(player.GetLanguage()))
@@ -106,6 +111,41 @@ public static class Library
             {
                 buyzone.AcceptInput(input);
             }
+        }
+    }
+
+    static public void Health(this CCSPlayerController player, CCSPlayerPawn playerPawn, int health)
+    {
+        player.Health = health;
+        playerPawn.Health = health;
+
+        Utilities.SetStateChanged(playerPawn, "CBaseEntity", "m_iHealth");
+    }
+    static public void Kevlar(this CCSPlayerPawn playerPawn, int kevlar)
+    {
+        playerPawn.ArmorValue = kevlar;
+    }
+    static public void Helmet(this CCSPlayerPawn playerPawn)
+    {
+        if (playerPawn.ItemServices != null)
+        {
+            new CCSPlayer_ItemServices(playerPawn.ItemServices.Handle).HasHelmet = true;
+        }
+    }
+    static public void MaxHealth(this CCSPlayerController player, CCSPlayerPawn playerPawn, int maxhealth)
+    {
+        player.MaxHealth = maxhealth;
+        playerPawn.MaxHealth = maxhealth;
+    }
+    static public void Speed(this CCSPlayerPawn pawn, float speed)
+    {
+        pawn.VelocityModifier = speed;
+    }
+    static public void GiveWeapon(this CCSPlayerController player, string[] weapons)
+    {
+        foreach (string weapon in weapons)
+        {
+            player.GiveNamedItem(weapon);
         }
     }
 }

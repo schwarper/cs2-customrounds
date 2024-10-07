@@ -27,7 +27,7 @@ public class CustomRounds : BasePlugin, IPluginConfig<Config>
     {
         Instance = this;
 
-        config.Tag = StringExtensions.ReplaceColorTags(config.Tag);
+        config.Tag = config.Tag.ReplaceColorTags();
 
         Config = config;
     }

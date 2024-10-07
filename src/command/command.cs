@@ -4,8 +4,8 @@ using CounterStrikeSharp.API.Modules.Admin;
 using CounterStrikeSharp.API.Modules.Commands;
 using static CustomRounds.CustomRounds;
 using static CustomRounds.Library;
-using static CustomRounds.Round;
 using static CustomRounds.Menu;
+using static CustomRounds.Round;
 
 namespace CustomRounds;
 
@@ -28,14 +28,14 @@ public static class Command
 
                 if (!AdminManager.PlayerHasPermissions(player, config.AdminFlag))
                 {
-                    PrintToChat(player, "No access");
+                    SendMessageToPlayer(player, "No access");
                     return;
                 }
 
                 if (command.GetArg(1) == "-i")
                 {
                     SetNext(round, -1);
-                    PrintToChatAll("Admin set inf round", player.PlayerName, round.Name);
+                    SendMessageToAllPlayers("Admin set inf round", player.PlayerName, round.Name);
                 }
                 else
                 {
@@ -45,7 +45,7 @@ public static class Command
                     }
 
                     SetNext(round, roundtime);
-                    PrintToChatAll("Admin set round", player.PlayerName, round.Name);
+                    SendMessageToAllPlayers("Admin set round", player.PlayerName, round.Name);
                 }
             });
         }
@@ -60,12 +60,12 @@ public static class Command
 
         if (!AdminManager.PlayerHasPermissions(player, Instance.Config.AdminFlag))
         {
-            PrintToChat(player, "No access");
+            SendMessageToPlayer(player, "No access");
             return;
         }
 
         StartRoundVote();
-        PrintToChatAll("Admin start vote", player.PlayerName);
+        SendMessageToAllPlayers("Admin start vote", player.PlayerName);
     }
 
     public static void Command_RoundEnd(CCSPlayerController? player, CommandInfo command)
@@ -77,12 +77,12 @@ public static class Command
 
         if (!AdminManager.PlayerHasPermissions(player, Instance.Config.AdminFlag))
         {
-            PrintToChat(player, "No access");
+            SendMessageToPlayer(player, "No access");
             return;
         }
 
         Reset(true);
-        PrintToChatAll("Admin reset round", player.PlayerName);
+        SendMessageToAllPlayers("Admin reset round", player.PlayerName);
     }
 
     public static void Command_ShortList(CCSPlayerController? player, CommandInfo command)
@@ -94,7 +94,7 @@ public static class Command
 
         if (!AdminManager.PlayerHasPermissions(player, Instance.Config.AdminFlag))
         {
-            PrintToChat(player, "No access");
+            SendMessageToPlayer(player, "No access");
             return;
         }
 
