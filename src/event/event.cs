@@ -300,9 +300,12 @@ public static class Event
             return HookResult.Continue;
         }
 
-        var playersCount = Utilities.GetPlayers().Where(p => p.PawnIsAlive && p != @event.Userid).Count();
+        var players = Utilities.GetPlayers()
+            .Where(p => p.PawnIsAlive && p != @event.Userid)
+            .Take(3)
+            .ToList();
 
-        if (playersCount == 2)
+        if (players.Count == 2 && players[0].Team != players[1].Team)
         {
             Reset(false);
         }

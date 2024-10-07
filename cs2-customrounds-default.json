@@ -1,156 +1,162 @@
 {
-    "Tag": "{red}[CSS] ",
-    "DefaultCTWeapons": [
-      "weapon_knife",
-      "weapon_deagle",
-      "weapon_awp"
-    ],
-    "DefaultTWeapons": [
-      "weapon_knife",
-      "weapon_deagle",
-      "weapon_awp"
-    ],
-    // When the round is over, it is sent to the server.
-    "RoundEndExecuteCommands": "sv_gravity 800",
-    // Sets the number of rounds in the round voting.
-    "HowManyRoundsInVote": 2,
-    // Sets how many rounds to start a round vote.
-    "VoteRoundCount": 4,
-    // Admin flag
-    "AdminFlag": "@css/generic",
-    // Spawn delay
-    "OnSpawnDelay": 0.1,
-    // Sets the number of rounds to be played in the voting round.
-    "HowManyRoundsLast": 3,
-    // Sets the number of seconds the html is displayed. Set -1 for permanent for the round.
-    "HtmlDisplayTime": 10,
-    "Rounds": {
-        "1": {
-            "Name": "[Only HS] Deagle",
-            "Weapons": [
-                "weapon_knife",
-                "weapon_deagle"
-            ],
-            "Shortcut": "deagle",
-            "OnlyHeadshot": true,
-            "NoBuy": true,
-            "CenterMsg": "html_customround"
-        },
-        "2": {
-            "Name": "[No Scope] Awp",
-            "Weapons": [
-                "weapon_knife",
-                "weapon_awp"
-            ],
-            "Shortcut": "ns",
-            "NoScope": true,
-            "NoBuy": true,
-            "UnlimitedAmmo": true,
-            "Kevlar": 100,
-            "Helmet": true,
-            "CenterMsg": "html_customround"
-        },
-        "3": {
-            "Name": "[Only HS] AK47",
-            "Weapons": [
-                "weapon_knife",
-                "weapon_ak47"
-            ],
-            "Shortcut": "ak",
-            "OnlyHeadshot": true,
-            "NoBuy": true,
-            "CenterMsg": "html_customround"
-        },
-        "4": {
-            "Name": "Knife Round",
-            "Weapons": [
-                "weapon_knife"
-            ],
-            "Shortcut": "knife",
-            "KnifeDamage": true,
-            "NoBuy": true,
-            "Speed": 1.5,
-            "CenterMsg": "html_customround"
-        },
-        "5": {
-            "Name": "Zeus Round",
-            "Weapons": [
-                "weapon_taser"
-            ],
-            "Shortcut": "zeus",
-            "NoBuy": true,
-            "Speed": 2,
-            "Cmd": "mp_taser_recharge_time 1.0",
-            "CenterMsg": "html_customround"
-        },
-        "6": {
-            "Name": "Glock Round",
-            "Weapons": [
-                "weapon_knife",
-                "weapon_glock"
-            ],
-            "Shortcut": "glock",
-            "NoBuy": true,
-            "CenterMsg": "html_customround"
-        },
-        "7": {
-            "Name": "[Only HS] M4A4",
-            "Weapons": [
-                "weapon_knife",
-                "weapon_m4a1"
-            ],
-            "Shortcut": "m4a4",
-            "OnlyHeadshot": true,
-            "NoBuy": true,
-            "CenterMsg": "html_customround"
-        },
-        "8": {
-            "Name": "[Only HS] USP",
-            "Weapons": [
-                "weapon_knife",
-                "weapon_usp_silencer"
-            ],
-            "Shortcut": "usp",
-            "OnlyHeadshot": true,
-            "NoBuy": true,
-            "CenterMsg": "html_customround"
-        },
-        "9": {
-            "Name": "SSG Round",
-            "Weapons": [
-                "weapon_knife",
-                "weapon_ssg08"
-            ],
-            "Shortcut": "ssg",
-            "NoBuy": true,
-            "Cmd": "sv_gravity 200;weapon_accuracy_nospread 1",
-            "CenterMsg": "html_customround"
-        },
-        "10": {
-            "Name": "[Only HS] M4A1-S",
-            "Weapons": [
-                "weapon_knife",
-                "weapon_m4a1_silencer"
-            ],
-            "Shortcut": "m4a1",
-            "OnlyHeadshot": true,
-            "NoBuy": true,
-            "CenterMsg": "html_customround"
-            },
-        "11": {
-            "Name": "Negev Round",
-            "Weapons": [
-                "weapon_knife",
-                "weapon_negev"
-            ],
-            "Shortcut": "negev",
-            "OnlyHeadshot": true,
-            "NoBuy": true,
-            "Health": 500,
-            "MaxHealth": 500,
-            "Speed": 2,
-            "CenterMsg": "html_customround"
-        }
+  "Tag": "{red}[CSS] ",
+  // Default weapons [Make list empty to disable this option, please do not delete] => []
+  "DefaultCTWeapons": [
+    "weapon_knife",
+    "weapon_deagle",
+    "weapon_awp"
+  ],
+  "DefaultTWeapons": [
+    "weapon_knife",
+    "weapon_deagle",
+    "weapon_awp"
+  ],
+  // When the round is over, it is sent to the server.
+  "RoundEndExecuteCommands": "sv_gravity 800",
+  // Sets the number of rounds in the round voting.
+  "HowManyRoundsInVote": 2,
+  // Sets how many rounds to start a round vote.
+  "VoteRoundCount": 4,
+  // Admin flag
+  "AdminFlag": "@css/generic",
+  // Spawn delay
+  "OnSpawnDelay": 0.1,
+  // Sets the number of rounds to be played in the voting round.
+  "HowManyRoundsLast": 3,
+  // Sets the number of seconds the html is displayed. Set -1 for permanent for the round.
+  "HtmlDisplayTime": 10,
+  // Stops the round when 1vs1.
+  "DuelSupport": true,
+  // Rounds
+  "Rounds": {
+    "1": {
+      "Name": "[Only HS] Deagle",
+      "Weapons": [
+        "weapon_knife",
+        "weapon_deagle"
+      ],
+      "Shortcut": "deagle",
+      "OnlyHeadshot": true,
+      "NoBuy": true,
+      "CenterMsg": "html_customround"
     },
-    "ConfigVersion": 1
-  }
+    "2": {
+      "Name": "[No Scope] Awp",
+      "Weapons": [
+        "weapon_knife",
+        "weapon_awp"
+      ],
+      "Shortcut": "ns",
+      "NoScope": true,
+      "NoBuy": true,
+      "UnlimitedAmmo": true,
+      "Kevlar": 100,
+      "Helmet": true,
+      "CenterMsg": "html_customround"
+    },
+    "3": {
+      "Name": "[Only HS] AK47",
+      "Weapons": [
+        "weapon_knife",
+        "weapon_ak47"
+      ],
+      "Shortcut": "ak",
+      "OnlyHeadshot": true,
+      "NoBuy": true,
+      "CenterMsg": "html_customround"
+    },
+    "4": {
+      "Name": "Knife Round",
+      "Weapons": [
+        "weapon_knife"
+      ],
+      "Shortcut": "knife",
+      "KnifeDamage": true,
+      "NoBuy": true,
+      "Speed": 1.5,
+      "CenterMsg": "html_customround"
+    },
+    "5": {
+      "Name": "Zeus Round",
+      "Weapons": [
+        "weapon_taser"
+      ],
+      "Shortcut": "zeus",
+      "NoBuy": true,
+      "Speed": 2,
+      "Cmd": "mp_taser_recharge_time 1.0",
+      "CenterMsg": "html_customround"
+    },
+    "6": {
+      "Name": "Glock Round",
+      "Weapons": [
+        "weapon_knife",
+        "weapon_glock"
+      ],
+      "Shortcut": "glock",
+      "NoBuy": true,
+      "CenterMsg": "html_customround"
+    },
+    "7": {
+      "Name": "[Only HS] M4A4",
+      "Weapons": [
+        "weapon_knife",
+        "weapon_m4a1"
+      ],
+      "Shortcut": "m4a4",
+      "OnlyHeadshot": true,
+      "NoBuy": true,
+      "CenterMsg": "html_customround"
+    },
+    "8": {
+      "Name": "[Only HS] USP",
+      "Weapons": [
+        "weapon_knife",
+        "weapon_usp_silencer"
+      ],
+      "Shortcut": "usp",
+      "OnlyHeadshot": true,
+      "NoBuy": true,
+      "Kevlar": 100,
+      "Helmet": true,
+      "CenterMsg": "html_customround"
+    },
+    "9": {
+      "Name": "SSG Round",
+      "Weapons": [
+        "weapon_knife",
+        "weapon_ssg08"
+      ],
+      "Shortcut": "ssg",
+      "NoBuy": true,
+      "Cmd": "sv_gravity 200;weapon_accuracy_nospread 1",
+      "CenterMsg": "html_customround"
+    },
+    "10": {
+      "Name": "[Only HS] M4A1-S",
+      "Weapons": [
+        "weapon_knife",
+        "weapon_m4a1_silencer"
+      ],
+      "Shortcut": "m4a1",
+      "OnlyHeadshot": true,
+      "NoBuy": true,
+      "CenterMsg": "html_customround"
+    },
+    "11": {
+      "Name": "Negev Round",
+      "Weapons": [
+        "weapon_knife",
+        "weapon_negev"
+      ],
+      "Shortcut": "negev",
+      "OnlyHeadshot": true,
+      "NoBuy": true,
+      "Health": 500,
+      "MaxHealth": 500,
+      "Speed": 2,
+      "CenterMsg": "html_customround"
+    }
+  },
+  "ConfigVersion": 1
+}
