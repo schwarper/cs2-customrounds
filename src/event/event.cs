@@ -138,11 +138,21 @@ public static class Event
 
         CTakeDamageInfo info = hook.GetParam<CTakeDamageInfo>(1);
 
-        if (info.Ability.Value?.DesignerName.Contains("knife") is true && GlobalCurrentRound.KnifeDamage is not true)
+        bool IsKnife = info.Ability.Value?.DesignerName.Contains("knife") is true;
+
+        if (GlobalCurrentRound.KnifeDamage is not true && IsKnife)
         {
             hook.SetReturn(false);
             return HookResult.Handled;
         }
+
+        if (GlobalCurrentRound.OnlyHeadshot is true && GetHitGroup(hook) != HitGroup_t.HITGROUP_HEAD && !IsKnife)
+        {
+            hook.SetReturn(false);
+            return HookResult.Handled;
+        }
+
+        return HookResult.Continue;
 
         static unsafe HitGroup_t GetHitGroup(DynamicHook hook)
         {
@@ -165,14 +175,6 @@ public static class Event
 
             return hitgroup;
         }
-
-        if (GlobalCurrentRound.OnlyHeadshot is true && GetHitGroup(hook) != HitGroup_t.HITGROUP_HEAD)
-        {
-            hook.SetReturn(false);
-            return HookResult.Handled;
-        }
-
-        return HookResult.Continue;
     }
 
     public static HookResult OnPlayerSpawn(EventPlayerSpawn @event, GameEventInfo info)
