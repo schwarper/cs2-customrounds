@@ -2,6 +2,8 @@ using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Memory;
 using CounterStrikeSharp.API.Modules.Memory.DynamicFunctions;
+using CounterStrikeSharp.API.Modules.Utils;
+using System.Runtime.InteropServices;
 using static CounterStrikeSharp.API.Core.Listeners;
 using static CustomRounds.CustomRounds;
 using static CustomRounds.Round;
@@ -23,52 +25,45 @@ public static class Event
     ];
 
     private static float GlobalHtmlDisplayTime = 0;
-
-    private enum AcquireMethod : int
-    {
-        PickUp = 0,
-        Buy,
-    };
-
-    private enum AcquireResult : int
-    {
-        Allowed = 0,
-        InvalidItem,
-        AlreadyOwned,
-        AlreadyPurchased,
-        ReachedGrenadeTypeLimit,
-        ReachedGrenadeTotalLimit,
-        NotAllowedByTeam,
-        NotAllowedByMap,
-        NotAllowedByMode,
-        NotAllowedForPurchase,
-        NotAllowedByProhibition,
-    };
-
-    private static readonly MemoryFunctionWithReturn<int, string, CCSWeaponBaseVData> GetCSWeaponDataFromKeyFunc =
-        new(GameData.GetSignature("GetCSWeaponDataFromKey"));
-
-    private static readonly MemoryFunctionWithReturn<CCSPlayer_ItemServices, CEconItemView, AcquireMethod, NativeObject, AcquireResult> CCSPlayer_CanAcquireFunc =
-        new(GameData.GetSignature("CCSPlayer_CanAcquire"));
+    private static bool IsWindows;
 
     public static void Load()
     {
-        Instance.RegisterListener<OnTick>(OnTick);
-        VirtualFunctions.CBaseEntity_TakeDamageOldFunc.Hook(OnTakeDamage, HookMode.Pre);
-        CCSPlayer_CanAcquireFunc.Hook(OnWeaponCanAcquire, HookMode.Pre);
+        IsWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
 
         Instance.RegisterEventHandler<EventPlayerSpawn>(OnPlayerSpawn);
         Instance.RegisterEventHandler<EventRoundStart>(OnRoundStart);
         Instance.RegisterEventHandler<EventRoundEnd>(OnRoundEnd);
         Instance.RegisterEventHandler<EventWeaponFire>(OnWeaponFire);
         Instance.RegisterEventHandler<EventPlayerDeath>(OnPlayerDeath);
+
+        Instance.RegisterListener<OnTick>(OnTick);
+
+        VirtualFunctions.CBaseEntity_TakeDamageOldFunc.Hook(OnTakeDamage, HookMode.Pre);
+
+        if (IsWindows)
+        {
+            VirtualFunctions.CCSPlayer_WeaponServices_CanUseFunc.Hook(OnCanUseFunc, HookMode.Pre);
+        }
+        else
+        {
+            VirtualFunctions.CCSPlayer_ItemServices_CanAcquireFunc.Hook(OnWeaponCanAcquire, HookMode.Pre);
+        }
     }
 
     public static void Unload()
     {
         Instance.RemoveListener<OnTick>(OnTick);
         VirtualFunctions.CBaseEntity_TakeDamageOldFunc.Unhook(OnTakeDamage, HookMode.Pre);
-        CCSPlayer_CanAcquireFunc.Unhook(OnWeaponCanAcquire, HookMode.Pre);
+
+        if (IsWindows)
+        {
+            VirtualFunctions.CCSPlayer_WeaponServices_CanUseFunc.Unhook(OnCanUseFunc, HookMode.Pre);
+        }
+        else
+        {
+            VirtualFunctions.CCSPlayer_ItemServices_CanAcquireFunc.Unhook(OnWeaponCanAcquire, HookMode.Pre);
+        }
     }
 
     public static void OnTick()
@@ -96,22 +91,42 @@ public static class Event
         }
     }
 
+    private static bool CanUseWeapon(CCSWeaponBaseVData? vdata)
+    {
+        if (vdata == null || GlobalCurrentRound == null)
+        {
+            return true;
+        }
+
+        return GlobalCurrentRound.Weapons.Any(vdata.Name.StartsWith);
+    }
+
+    public static HookResult OnCanUseFunc(DynamicHook hook)
+    {
+        var weapon = hook.GetParam<CBasePlayerWeapon>(1);
+        var vdata = weapon.As<CCSWeaponBase>().VData;
+
+        if (!CanUseWeapon(vdata))
+        {
+            weapon.Remove();
+            hook.SetReturn(false);
+            return HookResult.Handled;
+        }
+
+        return HookResult.Continue;
+    }
+
     public static HookResult OnWeaponCanAcquire(DynamicHook hook)
     {
-        if (GlobalCurrentRound == null)
+        CCSWeaponBaseVData vdata = VirtualFunctions.GetCSWeaponDataFromKeyFunc.Invoke(-1, hook.GetParam<CEconItemView>(1).ItemDefinitionIndex.ToString()) ?? throw new Exception("Failed to get CCSWeaponBaseVData");
+
+        if (!CanUseWeapon(vdata))
         {
-            return HookResult.Continue;
+            hook.SetReturn(AcquireResult.NotAllowedByProhibition);
+            return HookResult.Handled;
         }
 
-        CCSWeaponBaseVData vdata = GetCSWeaponDataFromKeyFunc.Invoke(-1, hook.GetParam<CEconItemView>(1).ItemDefinitionIndex.ToString()) ?? throw new Exception("Failed to get CCSWeaponBaseVData");
-
-        if (GlobalCurrentRound.Weapons.Contains(vdata.Name))
-        {
-            return HookResult.Continue;
-        }
-
-        hook.SetReturn(AcquireResult.NotAllowedByProhibition);
-        return HookResult.Handled;
+        return HookResult.Continue;
     }
 
     public static HookResult OnTakeDamage(DynamicHook hook)
