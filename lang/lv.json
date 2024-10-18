@@ -1,5 +1,6 @@
 {
   "No access": "{white}Tev nav pieejas izmantot šo komandu.",
+  "You cannot use this weapon": "Jūs nevarat izmantot šo ieroci => {0}",
 
   "Admin set round": "{blue}{0}{white} ir iestatījis nākamo raundu uz {green}{1}{white}",
   "Admin set inf round": "{blue}{0}{white} ir iestatījis nākamo raundu uz {green}{1}{white}. Jis bus grojamas tol, kol bus sustabdytas.",

@@ -1,5 +1,6 @@
 {
 	"No access": "{white}Bu komutu kullanmaya yetkiniz yok.",
+	"You cannot use this weapon": "Bu silahı kullanamazsınız. => {0}",
 
 	"Admin set round": "{blue}{0}{white}, sonraki turu {green}{1} {white}olarak ayarladı.",
 	"Admin set inf round": "{blue}{0}{white}, sonraki turu {green}{1} {white}olarak ayarladı. Durduruluna kadar oynanacaktır.",

@@ -1,5 +1,6 @@
 {
   "No access": "{white}You are not authorised to use this command.",
+  "You cannot use this weapon": "You cannot use this weapon => {0}",
 
   "Admin set round": "{blue}{0}{white} set the next round to {green}{1}{white}.",
   "Admin set inf round": "{blue}{0}{white} has set the next round to {green}{1}{white}. It will be played until stopped.",

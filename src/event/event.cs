@@ -1,5 +1,8 @@
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
+using CounterStrikeSharp.API.Core.Translations;
+using CounterStrikeSharp.API.Modules.Entities;
+using CounterStrikeSharp.API.Modules.Entities.Constants;
 using CounterStrikeSharp.API.Modules.Memory;
 using CounterStrikeSharp.API.Modules.Memory.DynamicFunctions;
 using CounterStrikeSharp.API.Modules.Utils;
@@ -25,12 +28,9 @@ public static class Event
     ];
 
     private static float GlobalHtmlDisplayTime = 0;
-    private static bool IsWindows;
 
     public static void Load()
     {
-        IsWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
-
         Instance.RegisterEventHandler<EventPlayerSpawn>(OnPlayerSpawn);
         Instance.RegisterEventHandler<EventRoundStart>(OnRoundStart);
         Instance.RegisterEventHandler<EventRoundEnd>(OnRoundEnd);
@@ -40,30 +40,14 @@ public static class Event
         Instance.RegisterListener<OnTick>(OnTick);
 
         VirtualFunctions.CBaseEntity_TakeDamageOldFunc.Hook(OnTakeDamage, HookMode.Pre);
-
-        if (IsWindows)
-        {
-            VirtualFunctions.CCSPlayer_WeaponServices_CanUseFunc.Hook(OnCanUseFunc, HookMode.Pre);
-        }
-        else
-        {
-            VirtualFunctions.CCSPlayer_ItemServices_CanAcquireFunc.Hook(OnWeaponCanAcquire, HookMode.Pre);
-        }
+        VirtualFunctions.CCSPlayer_ItemServices_CanAcquireFunc.Hook(OnWeaponCanAcquire, HookMode.Pre);
     }
 
     public static void Unload()
     {
         Instance.RemoveListener<OnTick>(OnTick);
         VirtualFunctions.CBaseEntity_TakeDamageOldFunc.Unhook(OnTakeDamage, HookMode.Pre);
-
-        if (IsWindows)
-        {
-            VirtualFunctions.CCSPlayer_WeaponServices_CanUseFunc.Unhook(OnCanUseFunc, HookMode.Pre);
-        }
-        else
-        {
-            VirtualFunctions.CCSPlayer_ItemServices_CanAcquireFunc.Unhook(OnWeaponCanAcquire, HookMode.Pre);
-        }
+        VirtualFunctions.CCSPlayer_ItemServices_CanAcquireFunc.Unhook(OnWeaponCanAcquire, HookMode.Pre);
     }
 
     public static void OnTick()
@@ -101,32 +85,40 @@ public static class Event
         return GlobalCurrentRound.Weapons.Any(vdata.Name.StartsWith);
     }
 
-    public static HookResult OnCanUseFunc(DynamicHook hook)
-    {
-        var weapon = hook.GetParam<CBasePlayerWeapon>(1);
-        var vdata = weapon.As<CCSWeaponBase>().VData;
-
-        if (!CanUseWeapon(vdata))
-        {
-            weapon.Remove();
-            hook.SetReturn(false);
-            return HookResult.Handled;
-        }
-
-        return HookResult.Continue;
-    }
-
     public static HookResult OnWeaponCanAcquire(DynamicHook hook)
     {
-        CCSWeaponBaseVData vdata = VirtualFunctions.GetCSWeaponDataFromKeyFunc.Invoke(-1, hook.GetParam<CEconItemView>(1).ItemDefinitionIndex.ToString()) ?? throw new Exception("Failed to get CCSWeaponBaseVData");
-
-        if (!CanUseWeapon(vdata))
+        if (GlobalCurrentRound == null)
         {
-            hook.SetReturn(AcquireResult.NotAllowedByProhibition);
-            return HookResult.Handled;
+            return HookResult.Continue;
         }
 
-        return HookResult.Continue;
+        if (hook.GetParam<CCSPlayer_ItemServices>(0).Pawn.Value?.Controller.Value?.As<CCSPlayerController>() is not CCSPlayerController player)
+        {
+            return HookResult.Continue;
+        }
+
+        CCSWeaponBaseVData vdata = VirtualFunctions.GetCSWeaponDataFromKeyFunc
+            .Invoke(-1, hook.GetParam<CEconItemView>(1).ItemDefinitionIndex.ToString())
+            ?? throw new Exception("Failed to retrieve CCSWeaponBaseVData from ItemDefinitionIndex.");
+
+        var matchingWeapon = GlobalCurrentRound.Weapons.FirstOrDefault(weapon =>
+            (weapon.Contains("knife") && vdata.Name.Contains("bayonet")) ||
+            (vdata.Name.StartsWith(weapon) &&
+            (!weapon.Contains("silencer") || vdata.Name.Contains("silencer")))
+        );
+
+        if (matchingWeapon != null)
+        {
+            return HookResult.Continue;
+        }
+
+        using (new WithTemporaryCulture(player.GetLanguage()))
+        {
+            player.PrintToCenterAlert(Instance.Localizer["You cannot use this weapon", vdata.Name]);
+        }
+
+        hook.SetReturn(AcquireResult.NotAllowedByProhibition);
+        return HookResult.Stop;
     }
 
     public static HookResult OnTakeDamage(DynamicHook hook)
