@@ -178,7 +178,7 @@ public static class Event
 
         Instance.AddTimer(Instance.Config.OnSpawnDelay, () =>
         {
-            if (!player.IsValid)
+            if (!player.IsValid || !player.PawnIsAlive)
             {
                 return;
             }
@@ -190,12 +190,7 @@ public static class Event
                 return;
             }
 
-            if (player.PlayerPawn.Value is not CCSPlayerPawn playerPawn)
-            {
-                return;
-            }
-
-            player.RemoveWeapons();
+            player.RemoveAllWeapons();
 
             foreach (string weapon in GlobalCurrentRound.Weapons)
             {
@@ -203,6 +198,11 @@ public static class Event
             }
 
             player.GiveWeapon(GlobalCurrentRound.Weapons);
+
+            if (player.PlayerPawn.Value is not CCSPlayerPawn playerPawn)
+            {
+                return;
+            }
 
             if (GlobalCurrentRound.MaxHealth is int maxhealth)
             {
@@ -214,14 +214,14 @@ public static class Event
                 player.Health(playerPawn, health);
             }
 
-            if (GlobalCurrentRound.Kevlar is int kevlar and > 0)
+            if (GlobalCurrentRound.Kevlar is int kevlar and >= 0)
             {
-                playerPawn.Kevlar(kevlar);
+                playerPawn.SetKevlar(kevlar);
             }
 
-            if (GlobalCurrentRound.Helmet is bool helmet)
+            if (GlobalCurrentRound.Helmet is bool helmetv is true)
             {
-                playerPawn.Helmet();
+                playerPawn.GiveHelmet();
             }
 
             if (GlobalCurrentRound.Speed is float speed)

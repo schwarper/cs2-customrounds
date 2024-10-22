@@ -87,16 +87,39 @@ public static class Library
         }
     }
 
+    public static void RemoveAllWeapons(this CCSPlayerController player)
+    {
+        if (player.PlayerPawn.Value is not CCSPlayerPawn playerPawn)
+        {
+            return;
+        }
+
+        var armor = playerPawn.GetKevlar();
+        var helmet = playerPawn.HasHelmet();
+
+        player.RemoveWeapons();
+
+        if (armor > 0)
+        {
+            playerPawn.SetKevlar(armor);
+        }
+
+        if (helmet)
+        {
+            playerPawn.GiveHelmet();
+        }
+    }
+
     public static void GiveDefaultWeapon(CCSPlayerController player)
     {
         if (player.Team == CsTeam.CounterTerrorist && Instance.Config.DefaultCTWeapons.Length > 0)
         {
-            player.RemoveWeapons();
+            player.RemoveAllWeapons();
             player.GiveWeapon(Instance.Config.DefaultCTWeapons);
         }
         else if (Instance.Config.DefaultTWeapons.Length > 0)
         {
-            player.RemoveWeapons();
+            player.RemoveAllWeapons();
             player.GiveWeapon(Instance.Config.DefaultTWeapons);
         }
     }
@@ -114,34 +137,47 @@ public static class Library
         }
     }
 
-    static public void Health(this CCSPlayerController player, CCSPlayerPawn playerPawn, int health)
+    public static void Health(this CCSPlayerController player, CCSPlayerPawn playerPawn, int health)
     {
         player.Health = health;
         playerPawn.Health = health;
 
         Utilities.SetStateChanged(playerPawn, "CBaseEntity", "m_iHealth");
     }
-    static public void Kevlar(this CCSPlayerPawn playerPawn, int kevlar)
+    public static void SetKevlar(this CCSPlayerPawn playerPawn, int kevlar)
     {
         playerPawn.ArmorValue = kevlar;
     }
-    static public void Helmet(this CCSPlayerPawn playerPawn)
+    public static int GetKevlar(this CCSPlayerPawn playerPawn)
+    {
+        return playerPawn.ArmorValue;
+    }
+    public static void GiveHelmet(this CCSPlayerPawn playerPawn)
     {
         if (playerPawn.ItemServices != null)
         {
             new CCSPlayer_ItemServices(playerPawn.ItemServices.Handle).HasHelmet = true;
         }
     }
-    static public void MaxHealth(this CCSPlayerController player, CCSPlayerPawn playerPawn, int maxhealth)
+    public static bool HasHelmet(this CCSPlayerPawn playerPawn)
+    {
+        if (playerPawn.ItemServices != null)
+        {
+            return new CCSPlayer_ItemServices(playerPawn.ItemServices.Handle).HasHelmet;
+        }
+
+        return false;
+    }
+    public static void MaxHealth(this CCSPlayerController player, CCSPlayerPawn playerPawn, int maxhealth)
     {
         player.MaxHealth = maxhealth;
         playerPawn.MaxHealth = maxhealth;
     }
-    static public void Speed(this CCSPlayerPawn pawn, float speed)
+    public static void Speed(this CCSPlayerPawn pawn, float speed)
     {
         pawn.VelocityModifier = speed;
     }
-    static public void GiveWeapon(this CCSPlayerController player, string[] weapons)
+    public static void GiveWeapon(this CCSPlayerController player, string[] weapons)
     {
         foreach (string weapon in weapons)
         {
