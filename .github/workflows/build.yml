@@ -48,7 +48,7 @@ jobs:
 
       - name: Build
         run: |
-          dotnet build cs2-customrounds.sln -c Release --no-restore /p:Version=1.${{ env.BUILD_NUMBER }}
+          dotnet build cs2-customrounds.csproj -c Release --no-restore /p:Version=1.${{ env.BUILD_NUMBER }}
 
       - name: Create Release Artifact (ZIP) from BuildOutput
         run: |
