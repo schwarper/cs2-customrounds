@@ -6,7 +6,7 @@ namespace CustomRounds;
 public class CustomRounds : BasePlugin, IPluginConfig<Config>
 {
     public override string ModuleName => "Custom Rounds";
-    public override string ModuleVersion => "1.5";
+    public override string ModuleVersion => "1.5"; 
     public override string ModuleAuthor => "schwarper";
 
     public static CustomRounds Instance { get; set; } = new();
@@ -33,3 +33,4 @@ public class CustomRounds : BasePlugin, IPluginConfig<Config>
     }
 
 }
+
