@@ -138,35 +138,13 @@ public static class Event
             return HookResult.Handled;
         }
 
-        if (GlobalCurrentRound.OnlyHeadshot is true && GetHitGroup(hook) != HitGroup_t.HITGROUP_HEAD && !IsKnife)
+        if (GlobalCurrentRound.OnlyHeadshot is true && info.GetHitGroup() != HitGroup_t.HITGROUP_HEAD && !IsKnife)
         {
             hook.SetReturn(false);
             return HookResult.Handled;
         }
 
         return HookResult.Continue;
-
-        static unsafe HitGroup_t GetHitGroup(DynamicHook hook)
-        {
-            nint info = hook.GetParam<nint>(1);
-            nint v4 = *(nint*)(info + 0x78);
-
-            if (v4 == nint.Zero)
-            {
-                return HitGroup_t.HITGROUP_INVALID;
-            }
-
-            nint v1 = *(nint*)(v4 + 16);
-
-            HitGroup_t hitgroup = HitGroup_t.HITGROUP_GENERIC;
-
-            if (v1 != nint.Zero)
-            {
-                hitgroup = (HitGroup_t)(*(uint*)(v1 + 56));
-            }
-
-            return hitgroup;
-        }
     }
 
     public static HookResult OnPlayerSpawn(EventPlayerSpawn @event, GameEventInfo info)

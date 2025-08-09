@@ -15,24 +15,14 @@ public static class Library
 
     public static void SendMessageToPlayer(CCSPlayerController player, string messageKey, params object[] args)
     {
-        using (new WithTemporaryCulture(player.GetLanguage()))
-        {
-            LocalizedString message = Instance.Localizer[messageKey, args];
-            VirtualFunctions.ClientPrint(player.Handle, HudDestination.Chat, Instance.Config.Tag + message, 0, 0, 0, 0);
-        }
+        player.PrintToChat(Instance.Localizer.ForPlayer(player, messageKey, args));
     }
 
     public static void SendMessageToAllPlayers(string messageKey, params object[] args)
     {
-        for (int i = 0; i < Server.MaxPlayers; i++)
+        var players = Utilities.GetPlayers();
+        foreach (var player in players)
         {
-            CCSPlayerController? player = Utilities.GetEntityFromIndex<CCSPlayerController>(i + 1);
-
-            if (player?.IsValid is not true || player.IsBot || player.DesignerName != playerdesignername)
-            {
-                continue;
-            }
-
             SendMessageToPlayer(player, messageKey, args);
         }
     }
