@@ -23,6 +23,9 @@ public static class Library
         var players = Utilities.GetPlayers();
         foreach (var player in players)
         {
+            if (player.IsBot)
+                continue;
+
             SendMessageToPlayer(player, messageKey, args);
         }
     }
