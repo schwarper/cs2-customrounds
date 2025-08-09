@@ -1,12 +1,9 @@
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Translations;
-using CounterStrikeSharp.API.Modules.Entities;
-using CounterStrikeSharp.API.Modules.Entities.Constants;
 using CounterStrikeSharp.API.Modules.Memory;
 using CounterStrikeSharp.API.Modules.Memory.DynamicFunctions;
 using CounterStrikeSharp.API.Modules.Utils;
-using System.Runtime.InteropServices;
 using static CounterStrikeSharp.API.Core.Listeners;
 using static CustomRounds.CustomRounds;
 using static CustomRounds.Round;
@@ -75,16 +72,6 @@ public static class Event
         }
     }
 
-    private static bool CanUseWeapon(CCSWeaponBaseVData? vdata)
-    {
-        if (vdata == null || GlobalCurrentRound == null)
-        {
-            return true;
-        }
-
-        return GlobalCurrentRound.Weapons.Any(vdata.Name.StartsWith);
-    }
-
     public static HookResult OnWeaponCanAcquire(DynamicHook hook)
     {
         if (GlobalCurrentRound == null)
@@ -101,7 +88,7 @@ public static class Event
             .Invoke(-1, hook.GetParam<CEconItemView>(1).ItemDefinitionIndex.ToString())
             ?? throw new Exception("Failed to retrieve CCSWeaponBaseVData from ItemDefinitionIndex.");
 
-        var matchingWeapon = GlobalCurrentRound.Weapons.FirstOrDefault(weapon =>
+        string? matchingWeapon = GlobalCurrentRound.Weapons.FirstOrDefault(weapon =>
             (weapon.Contains("knife") && vdata.Name.Contains("bayonet")) ||
             (vdata.Name.StartsWith(weapon) &&
             (!weapon.Contains("silencer") || vdata.Name.Contains("silencer")))
@@ -287,10 +274,9 @@ public static class Event
             return HookResult.Continue;
         }
 
-        var players = Utilities.GetPlayers()
+        List<CCSPlayerController> players = [.. Utilities.GetPlayers()
             .Where(p => p.PawnIsAlive && p != @event.Userid)
-            .Take(3)
-            .ToList();
+            .Take(3)];
 
         if (players.Count == 2 && players[0].Team != players[1].Team)
         {
@@ -327,7 +313,7 @@ public static class Event
             return;
         }
 
-        var htmldisplaytime = GlobalHtmlDisplayTime;
+        float htmldisplaytime = GlobalHtmlDisplayTime;
 
         if (htmldisplaytime != -1 && htmldisplaytime - Server.CurrentTime < 0)
         {

@@ -1,10 +1,8 @@
+using System.Text;
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Translations;
-using CounterStrikeSharp.API.Modules.Memory;
 using CounterStrikeSharp.API.Modules.Utils;
-using Microsoft.Extensions.Localization;
-using System.Text;
 using static CustomRounds.CustomRounds;
 
 namespace CustomRounds;
@@ -15,16 +13,19 @@ public static class Library
 
     public static void SendMessageToPlayer(CCSPlayerController player, string messageKey, params object[] args)
     {
-        player.PrintToChat(Instance.Localizer.ForPlayer(player, messageKey, args));
+        player.PrintToChat(Instance.Config.Tag + Instance.Localizer.ForPlayer(player, messageKey, args));
     }
 
     public static void SendMessageToAllPlayers(string messageKey, params object[] args)
     {
-        var players = Utilities.GetPlayers();
-        foreach (var player in players)
+        for (int i = 0; i < Server.MaxPlayers; i++)
         {
-            if (player.IsBot)
+            CCSPlayerController? player = Utilities.GetEntityFromIndex<CCSPlayerController>(i + 1);
+
+            if (player?.IsValid is not true || player.IsBot || player.DesignerName != playerdesignername)
+            {
                 continue;
+            }
 
             SendMessageToPlayer(player, messageKey, args);
         }
@@ -65,7 +66,7 @@ public static class Library
         tscore = 0;
         ctscore = 0;
 
-        var csteammanager = Utilities.FindAllEntitiesByDesignerName<CCSTeam>("cs_team_manager").ToList();
+        List<CCSTeam> csteammanager = [.. Utilities.FindAllEntitiesByDesignerName<CCSTeam>("cs_team_manager")];
 
         if (csteammanager.Count > 0)
         {
@@ -87,8 +88,8 @@ public static class Library
             return;
         }
 
-        var armor = playerPawn.GetKevlar();
-        var helmet = playerPawn.HasHelmet();
+        int armor = playerPawn.GetKevlar();
+        bool helmet = playerPawn.HasHelmet();
 
         player.RemoveWeapons();
 
@@ -119,7 +120,7 @@ public static class Library
 
     public static void SetBuyzoneInput(string input)
     {
-        var buyzones = Utilities.FindAllEntitiesByDesignerName<CBaseEntity>("func_buyzone").ToList();
+        List<CBaseEntity> buyzones = Utilities.FindAllEntitiesByDesignerName<CBaseEntity>("func_buyzone").ToList();
 
         if (buyzones.Count > 0)
         {
@@ -154,12 +155,7 @@ public static class Library
     }
     public static bool HasHelmet(this CCSPlayerPawn playerPawn)
     {
-        if (playerPawn.ItemServices != null)
-        {
-            return new CCSPlayer_ItemServices(playerPawn.ItemServices.Handle).HasHelmet;
-        }
-
-        return false;
+        return playerPawn.ItemServices != null && new CCSPlayer_ItemServices(playerPawn.ItemServices.Handle).HasHelmet;
     }
     public static void MaxHealth(this CCSPlayerController player, CCSPlayerPawn playerPawn, int maxhealth)
     {

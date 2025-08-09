@@ -54,14 +54,7 @@ public static class Round
     {
         GlobalNextRound = round;
 
-        if (roundtime > 0)
-        {
-            GlobalRoundCount = roundtime;
-        }
-        else
-        {
-            GlobalRoundCount = -1;
-        }
+        GlobalRoundCount = roundtime > 0 ? roundtime : -1;
     }
 
     public static void Reset(bool giveweapons)
