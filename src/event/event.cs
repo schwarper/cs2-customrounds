@@ -125,7 +125,7 @@ public static class Event
             return HookResult.Handled;
         }
 
-        if (GlobalCurrentRound.OnlyHeadshot is true && info.HitGroupId != HitGroup_t.HITGROUP_HEAD && !IsKnife)
+        if (GlobalCurrentRound.OnlyHeadshot is true && info.GetHitGroup() != HitGroup_t.HITGROUP_HEAD && !IsKnife)
         {
             hook.SetReturn(false);
             return HookResult.Handled;
