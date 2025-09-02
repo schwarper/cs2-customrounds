@@ -164,11 +164,12 @@
         "weapon_hegrenade"
       ],
       "Shortcut": "he",
-      "OnlyHeadshot": true,
+      "UnlimitedAmmo": true,
       "NoBuy": true,
       "CenterMsg": "html_customround"
     }
   },
   "ConfigVersion": 1
 }
+
 
