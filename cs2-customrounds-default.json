@@ -156,7 +156,19 @@
       "MaxHealth": 500,
       "Speed": 2,
       "CenterMsg": "html_customround"
+    },
+    "12": {
+      "Name": "Grenade Round",
+      "Weapons": [
+        "weapon_knife",
+        "weapon_hegrenade"
+      ],
+      "Shortcut": "he",
+      "OnlyHeadshot": true,
+      "NoBuy": true,
+      "CenterMsg": "html_customround"
     }
   },
   "ConfigVersion": 1
 }
+
