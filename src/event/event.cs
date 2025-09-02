@@ -24,6 +24,17 @@ public static class Event
         "weapon_ssg08"
     ];
 
+    public static readonly string[] GlobalGrenades =
+    [
+        "weapon_flashbang",
+        "weapon_hegrenade",
+        "weapon_smokegrenade",
+        "weapon_molotov",
+        "weapon_incgrenade",
+        "weapon_decoy"
+    ];
+
+
     private static float GlobalHtmlDisplayTime = 0;
 
     public static void Load()
@@ -261,8 +272,25 @@ public static class Event
         {
             return HookResult.Continue;
         }
-
-        activeweapon.Clip1 += 1;
+        
+        if (GlobalGrenades.Contains(activeweapon.DesignerName))
+        {
+            if (@event.Userid is CCSPlayerController player && player.IsValid && player.PawnIsAlive)
+            {
+                
+                Instance.AddTimer(0.1f, () =>
+                {
+                    if (player.IsValid && player.PawnIsAlive)
+                    {
+                        player.GiveNamedItem(activeweapon.DesignerName);
+                    }
+                });
+            }
+        }
+        else
+        {
+            activeweapon.Clip1 += 1;
+        }
 
         return HookResult.Continue;
     }
