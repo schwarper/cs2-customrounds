@@ -272,12 +272,12 @@ public static class Event
         {
             return HookResult.Continue;
         }
-        
+
         if (GlobalGrenades.Contains(activeweapon.DesignerName))
         {
             if (@event.Userid is CCSPlayerController player && player.IsValid && player.PawnIsAlive)
             {
-                
+
                 Instance.AddTimer(0.1f, () =>
                 {
                     if (player.IsValid && player.PawnIsAlive)
@@ -297,20 +297,39 @@ public static class Event
 
     public static HookResult OnPlayerDeath(EventPlayerDeath @event, GameEventInfo info)
     {
-        if (GlobalCurrentRound == null || !Instance.Config.DuelSupport)
+        if (GlobalCurrentRound == null)
         {
             return HookResult.Continue;
         }
 
-        List<CCSPlayerController> players = [.. Utilities.GetPlayers()
-            .Where(p => p.PawnIsAlive && p != @event.Userid)
+        var victim = @event.Userid;
+        var killer = @event.Attacker;
+
+        if (Instance.Config.DuelSupport)
+        {
+            List<CCSPlayerController> players = [.. Utilities.GetPlayers()
+            .Where(p => p.PawnIsAlive && p != victim)
             .Take(3)];
 
-        if (players.Count == 2 && players[0].Team != players[1].Team)
-        {
-            Reset(false);
+            if (players.Count == 2 && players[0].Team != players[1].Team)
+            {
+                Reset(false);
+                return HookResult.Continue;
+            }
         }
 
+        if (GlobalCurrentRound.TPOnKill is true && killer != null && victim != null && killer != victim)
+        {
+            var victimPos = victim.PlayerPawn.Value?.AbsOrigin;
+            if (victimPos != null)
+            {
+                killer.PlayerPawn.Value?.Teleport(
+                    victimPos,
+                    killer.PlayerPawn.Value.AbsRotation,
+                    killer.PlayerPawn.Value.AbsVelocity
+                );
+            }
+        }
         return HookResult.Continue;
     }
 

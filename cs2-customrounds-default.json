@@ -167,6 +167,19 @@
       "UnlimitedAmmo": true,
       "NoBuy": true,
       "CenterMsg": "html_customround"
+    },
+    "13": {
+      "Name": "[Only HS + TP] UMP",
+      "Weapons": [
+        "weapon_knife",
+        "weapon_ump45"
+      ],
+      "Shortcut": "ump",
+      "UnlimitedAmmo": true,
+      "NoBuy": true,
+      "OnlyHeadshot": true,
+      "TPOnKill": true,
+      "CenterMsg": "html_customround"
     }
   },
   "ConfigVersion": 1

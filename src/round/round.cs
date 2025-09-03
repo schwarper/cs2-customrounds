@@ -19,6 +19,7 @@ public static class Round
         public int? Health { get; set; }
         public int? Kevlar { get; set; }
         public bool? Helmet { get; set; }
+        public bool? TPOnKill { get; set; }
         public int? MaxHealth { get; set; }
         public float? Speed { get; set; }
         public string? Cmd { get; set; }
