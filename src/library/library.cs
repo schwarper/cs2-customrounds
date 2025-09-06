@@ -57,6 +57,11 @@ public static class Library
                 builder.Append(Instance.Localizer["html_png", "headshot"]);
             }
 
+            if (Round.GlobalCurrentRound.TPOnKill is true)
+            {
+                builder.Append(Instance.Localizer["html_png", "tponkill"]); // prob needs a better tponkill image
+            }
+
             player.PrintToCenterHtml(builder.ToString());
         }
     }
